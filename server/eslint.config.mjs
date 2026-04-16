@@ -1,4 +1,4 @@
-import {defineConfig} from "eslint-config";
+import {defineConfig} from "eslint/config";
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 
@@ -6,11 +6,12 @@ export default defineConfig(
 	js.configs.recommended,
 	tseslint.configs.recommended,
 	{
+		files: ["**/*.ts"],
 		languageOptions: {
 			parserOptions: {
 				project: true,
 				tsconfigRootDir: import.meta.dirname,
 			},
-		},
+		}
 	}
 );
