@@ -5,7 +5,10 @@
   "main": "src/index.js",
   "scripts": {
     "test": "test",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "security": "npm run security:lint && npm run security:audit",
+    "security:lint": "eslint --config eslint-security.config.mjs .",
+    "security:audit": "check-audit"
   },
   "repository": {
     "type": "git",
