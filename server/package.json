@@ -5,9 +5,9 @@
   "main": "src/index.js",
   "scripts": {
     "test": "test",
-    "lint": "eslint .",
+    "lint": "eslint src",
     "security": "npm run security:lint && npm run security:audit",
-    "security:lint": "eslint --config eslint-security.config.mjs .",
+    "security:lint": "eslint --config eslint-security.config.mjs src",
     "security:audit": "check-audit"
   },
   "repository": {
