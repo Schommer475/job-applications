@@ -1,0 +1,29 @@
+{
+  "name": "job-applications.server",
+  "version": "0.0.0",
+  "description": "Backend for job-applications app",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Schommer475/job-applications.git"
+  },
+  "keywords": [
+    "job-applications",
+    "server"
+  ],
+  "author": "tim.schommer",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Schommer475/job-applications/issues"
+  },
+  "homepage": "https://github.com/Schommer475/job-applications#readme",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint-config": "^0.3.0",
+    "typescript": "^6.0.2",
+    "typescript-eslint": "^8.58.2"
+  }
+}
