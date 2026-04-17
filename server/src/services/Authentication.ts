@@ -1,6 +1,6 @@
-import {LoginInput} from "../schemas/login";
-import Data from "../db/Authentication";
-import OperationDenied from "../errors/OperationDenied";
+import {LoginInput} from "../schemas/login.js";
+import Data from "../db/Authentication.js";
+import OperationDenied from "../errors/OperationDenied.js";
 import bcrypt from "bcrypt";
 import jwt, {Secret} from "jsonwebtoken";
 

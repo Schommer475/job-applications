@@ -1,6 +1,6 @@
 import {Request, Response, NextFunction} from 'express';
 import {z, ZodError} from 'zod';
-import BadRequest from '../errors/BadRequest';
+import BadRequest from "../errors/BadRequest.js";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function validateSchema (schema: z.ZodObject<any, any>) {

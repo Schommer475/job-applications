@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import Authentication from "../services/Authentication";
+import Authentication from "../services/Authentication.js";
 
 export async function loginUser (request: Request, response: Response) {
 	response.cookie("jwt", await authentication().login(request.body), {
