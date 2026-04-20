@@ -1,7 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 import handleErrors from "./middleware/handleErrors.js";
-import loginRoutes from "./routes/login.js";
+import authRoutes from "./routes/auth.js";
 
 const app = express(),
 	{ENVIRONMENT} = process.env;
@@ -18,5 +18,5 @@ if (ENVIRONMENT === "Development") {
 
 app.use(logger);
 app.use(express.json());
-app.use("/login", loginRoutes);
+app.use("/auth", authRoutes);
 app.use(handleErrors);
