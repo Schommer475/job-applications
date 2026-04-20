@@ -12,10 +12,10 @@ export async function loginUser (request: Request, response: Response) {
 
 // only clearing the cookie for logout is a deliberate complexity trade-off decision
 export async function logoutUser (request: Request, response: Response) {
-	response.clearCookie('jwt', {
+	response.clearCookie("jwt", {
 		httpOnly: true,
 		secure: true,
-		sameSite: 'strict'
+		sameSite: "strict"
 	});
 	response.send("Logout Successful");
 }

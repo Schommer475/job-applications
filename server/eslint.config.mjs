@@ -15,6 +15,14 @@ export default defineConfig(
 				project: true,
 				tsconfigRootDir: dirname(fileURLToPath(import.meta.url)),
 			},
+		},
+		rules: {
+			"prefer-const": ["warn", {
+				"ignoreReadBeforeAssign": true
+			}],
+			"quotes": ["error", "double", {
+				"avoidEscape": true
+			}]
 		}
 	}
 );
