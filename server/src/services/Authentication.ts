@@ -30,7 +30,17 @@ export default class Authentication {
 		}
 
 		await validatePassword(password, storedPassword);
-		return generateToken(id);
+		return await generateToken(id);
+	}
+
+	async validateToken (token: string): Promise<ParsedToken> {
+		return await new Promise((resolve, reject) => jwt.verify(token, secretKey, (err, decoded) => {
+			if (err) {
+				reject(new OperationDenied("Invalid token"));
+			} else {
+				resolve(decoded as ParsedToken);
+			}
+		}));
 	}
 }
 
@@ -40,8 +50,20 @@ async function validatePassword (plaintextPassword: string, storedPassword: stri
 	}
 }
 
-function generateToken (profileId: number) {
-	return jwt.sign({profileId}, secretKey, {
-		expiresIn: oneDay
+async function generateToken (profileId: number) {
+	return await new Promise((resolve, reject) => {
+		jwt.sign({profileId}, secretKey, {
+			expiresIn: oneDay
+		}, (err, signed) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve(signed);
+			}
+		})
 	});
 }
+
+type ParsedToken = {
+	profileId: number
+};

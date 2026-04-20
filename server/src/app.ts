@@ -1,5 +1,6 @@
 import express from "express";
 import morgan from "morgan";
+import authorize from "./middleware/authorize.js";
 import handleErrors from "./middleware/handleErrors.js";
 import authRoutes from "./routes/auth.js";
 import positionRoutes from "./routes/positions.js";
@@ -20,6 +21,5 @@ if (ENVIRONMENT === "Development") {
 app.use(logger);
 app.use(express.json());
 app.use("/auth", authRoutes);
-// TODO authentication
-app.use("/users/:profileId", positionRoutes);
+app.use("/users/:profileId/positions", authorize, positionRoutes);
 app.use(handleErrors);
