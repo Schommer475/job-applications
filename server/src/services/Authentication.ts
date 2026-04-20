@@ -23,14 +23,14 @@ export default class Authentication {
 	}
 
 	async login ({username, password}: LoginInput) {
-		const {profileId, password: storedPassword} = await this.#data.getUser(username) ?? {};
+		const {id, password: storedPassword} = await this.#data.getUser(username) ?? {};
 
-		if (!storedPassword || !profileId) {
+		if (!storedPassword || !id) {
 			throw new OperationDenied("Username or password is incorrect");
 		}
 
 		await validatePassword(password, storedPassword);
-		return generateToken(profileId);
+		return generateToken(id);
 	}
 }
 

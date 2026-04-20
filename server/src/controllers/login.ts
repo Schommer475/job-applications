@@ -7,6 +7,7 @@ export async function loginUser (request: Request, response: Response) {
 		secure: true,
 		sameSite: "strict"
 	});
+	response.send("Login Successful");
 }
 
 function authentication () {

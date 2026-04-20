@@ -1,13 +1,23 @@
+import sql from "./sql.js";
+
 export default class Authentication {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	async getUser (username: string): Promise<User|undefined> {
-		// TODO actually retrieve the stored password
-		return;
+		const [user] = await sql<User[]>`
+			SELECT id,
+				username,
+				password
+			
+			FROM users
+
+			WHERE username = ${username}
+		`;
+
+		return user;
 	}
 }
 
 type User = {
-	profileId: number,
-	userName: string,
+	id: number,
+	username: string,
 	password: string
 };
