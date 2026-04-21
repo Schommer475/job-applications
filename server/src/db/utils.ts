@@ -29,17 +29,27 @@ function toStructured<T extends object> (row: T): Structured<T> {
 		if (remaining.length) {
 			nestedKeys.add(first);
 			structured[first] ??= {};
-			structured[first][remaining.join("")] = value;
+			structured[first][remaining.join(":")] = value;
 		} else {
 			structured[first] = value;
 		}
 	}
 
 	for (const key of nestedKeys) {
-		structured[key] = toStructured(structured[key]);
+		structured[key] = collapse(toStructured(structured[key]));
 	}
 
 	return structured as Structured<T>;
+}
+
+function collapse<T extends object> (record: T): Collapsed<T> {
+	let collapsed: T|null = record;
+
+	if (Object.values(record).every(value => value === null)) {
+		collapsed = null;
+	}
+
+	return collapsed as Collapsed<T>;
 }
 
 // Type definitions
@@ -61,9 +71,9 @@ type PascalCase<S extends string> = S extends `${infer P1}_${infer P2}`
 type Structured<T> =
 	{ [K in PlainKeys<T>]: T[K] }
 	&
-	{ [P in Prefix<GroupedKeys<T>>]: Structured<{
+	{ [P in Prefix<GroupedKeys<T>>]: Collapsed<Structured<{
 		[K in GroupedKeys<T> as K extends `${P}:${infer S}` ? S : never]: T[K]
-		}>
+		}>>
 	};
 
 type PlainKeys<T> = {
@@ -75,3 +85,12 @@ type GroupedKeys<T> = {
 }[keyof T & string];
 
 type Prefix<K extends string> = K extends `${infer P}:${string}` ? P : never;
+
+type AllNullable<T> = {
+  [K in keyof T]: null extends T[K] ? never : true
+}[keyof T] extends never ? true : false;
+
+type Collapsed<T> =
+  [T[keyof T]] extends [null] ? null
+  : AllNullable<T> extends true ? T | null
+  : T;
