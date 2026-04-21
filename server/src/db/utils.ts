@@ -1,4 +1,4 @@
-export async function transformCase<T extends object> (promise: Promise<T[]>): Promise<CamelCased<T>[]> {
+export async function transformCase<T extends object> (promise: Promise<T[]>|T[]): Promise<CamelCased<T>[]> {
 	const rows = await promise;
 
 	return rows.map((row) => Object.fromEntries(Object.entries(row).map(([key, value]) => {
