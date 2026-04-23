@@ -50,9 +50,9 @@ async function validatePassword (plaintextPassword: string, storedPassword: stri
 	}
 }
 
-async function generateToken (profileId: number) {
+async function generateToken (userId: number) {
 	return await new Promise((resolve, reject) => {
-		jwt.sign({profileId}, secretKey, {
+		jwt.sign({userId}, secretKey, {
 			expiresIn: oneDay
 		}, (err, signed) => {
 			if (err) {
@@ -65,5 +65,5 @@ async function generateToken (profileId: number) {
 }
 
 type ParsedToken = {
-	profileId: number
+	userId: number
 };

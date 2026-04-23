@@ -9,6 +9,8 @@ export default function handleErrors (error: Error, request: Request, response: 
 		response.status(statusCodes.BAD_REQUEST);
 	} else if (error.name === "OperationDenied") {
 		response.status(statusCodes.UNAUTHORIZED);
+	} else if (error.name === "NotFound") {
+		response.status(statusCodes.NOT_FOUND);
 	} else {
 		response.status(statusCodes.INTERNAL_SERVER_ERROR);
 	}

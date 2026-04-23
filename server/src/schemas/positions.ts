@@ -3,13 +3,9 @@ import {z} from "zod";
 export const positionInput = z.object({
 	company: z.string().min(1).max(100),
 	title: z.string().min(1).max(100),
-	status: z.enum([
-		"Not Applied",
-		"Applied",
-		"Interviewing",
-		"Rejected",
-		"Offered"
-	]),
+	status: z.object({
+		id: z.int()
+	}),
 	dateApplied: z.nullish(z.iso.date()),
 	travelMinutes: z.nullish(z.int().nonnegative()),
 	notes: z.nullish(z.string()),

@@ -20,9 +20,10 @@ function toCamelCase<T extends string> (key: T): CamelCase<T> {
 
 function toStructured<T extends object> (row: T): Structured<T> {
 	const nestedKeys = new Set<string>(),
-		// eslint-disable @typescript-eslint/no-explicit-any
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		structured: any = {};
 
+	/* eslint-disable security/detect-object-injection */
 	for (const [key, value] of (Object.entries(row))) {
 		const [first, ...remaining] = key.split(":");
 
@@ -38,6 +39,7 @@ function toStructured<T extends object> (row: T): Structured<T> {
 	for (const key of nestedKeys) {
 		structured[key] = collapse(toStructured(structured[key]));
 	}
+	/* eslint-enable security/detect-object-injection */
 
 	return structured as Structured<T>;
 }

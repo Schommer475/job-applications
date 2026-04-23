@@ -2,22 +2,18 @@ import {Request, Response, NextFunction} from "express";
 import Authentication from "../services/Authentication.js";
 import OperationDenied from "../errors/OperationDenied.js";
 
-export default async function authorize (request: Request, response: Response, next: NextFunction) {
-	let token = getToken(request),
-		pathProfileId = Number(request.params.profileId),
-		profileId;
+export default async function authorize (request: AuthorizedRequest, response: Response, next: NextFunction) {
+	const token = getToken(request),
+		pathUserId = Number(request.params.userId),
+		{userId} = await authentication().validateToken(token);
 
-	if (!token) {
-		throw new OperationDenied("Authorization token required");
-	}
-
-	({profileId} = await authentication().validateToken(token));
-
-	if (profileId !== pathProfileId) {
+	if (userId !== pathUserId) {
 		throw new OperationDenied("User does not have access to resource");
 	}
 
-	request.user = Object.freeze({profileId});
+	request.user = Object.freeze({
+		id: userId
+	});
 
 	next();
 }
@@ -26,22 +22,23 @@ function authentication () {
 	return new Authentication();
 }
 
-function getToken (request: Request): string|undefined {
-	const cookies = request.headers.cookie?.split(";") ?? [];
+function getToken (request: Request): string {
+	const cookies = request.headers.cookie?.split(";") ?? [],
+		token = cookies.filter((cookie: string) => cookie.startsWith("jwt="))
+			.map((cookie: string) => cookie.slice(4))
+			.shift();
 
-	return cookies.filter((cookie: string) => cookie.startsWith("jwt="))
-		.map((cookie: string) => cookie.slice(4))
-		.shift();
+	if (!token) {
+		throw new OperationDenied("Authorization token required");
+	}
+
+	return token;
 }
 
-declare global {
-	namespace Express {
-		interface Request {
-			user?: User
-		}
-	}
+export interface AuthorizedRequest extends Request {
+	user?: User
 }
 
 type User = {
-	profileId: number
+	id: number
 }

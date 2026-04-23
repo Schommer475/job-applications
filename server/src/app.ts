@@ -21,5 +21,5 @@ if (ENVIRONMENT === "Development") {
 app.use(logger);
 app.use(express.json());
 app.use("/auth", authRoutes);
-app.use("/users/:profileId/positions", authorize, positionRoutes);
+app.use("/users/:userId/positions", authorize, positionRoutes);
 app.use(handleErrors);

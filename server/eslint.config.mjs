@@ -4,6 +4,7 @@ import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import {dirname} from "node:path";
 import {fileURLToPath} from "node:url";
+import security from "eslint-plugin-security";
 
 export default defineConfig(
 	js.configs.recommended,
@@ -15,6 +16,9 @@ export default defineConfig(
 				project: ["./tsconfig.eslint.json"],
 				tsconfigRootDir: dirname(fileURLToPath(import.meta.url)),
 			},
+		},
+		plugins: {
+			security
 		},
 		rules: {
 			"prefer-const": ["warn", {
