@@ -3,7 +3,7 @@
 --
 
 
--- Dumped from database version 17.8 (a48d9ca)
+-- Dumped from database version 17.8 (130b160)
 -- Dumped by pg_dump version 17.9 (Ubuntu 17.9-1.pgdg24.04+1)
 
 SET statement_timeout = 0;
@@ -31,7 +31,8 @@ CREATE TABLE public.interviews (
     scheduled timestamp with time zone NOT NULL,
     duration interval,
     location character varying,
-    meeting_link character varying(2000)
+    meeting_link character varying(2000),
+    label character varying(100) NOT NULL
 );
 
 
