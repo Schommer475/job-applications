@@ -1,0 +1,147 @@
+.panes {
+	width: 100%;
+	height: 100%;
+	border-color: #999999;
+	border-width: 1px;
+	border-style: solid;
+	overflow: hidden;
+	position: relative;
+	anchor-scope: --resize-bar;
+}
+
+.panes > section.pane {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	overflow: hidden;
+	width: 10%;
+}
+
+.panes > section.pane.left {
+	border-color: #999999;
+	border-right-style: solid;
+	border-right-width: var(--resize-bar-width);
+	left: 0;
+}
+
+.panes > section.pane.right {
+	right: 0;
+}
+
+.panes > .resize-bar {
+	height: 100%;
+	border-color: #999999;
+	border-left-style: solid;
+	border-left-width: var(--resize-bar-width);
+	padding-right: 3px;
+	z-index: 100;
+	position: absolute;
+	anchor-name: --resize-bar;
+}
+
+.panes > .resize-bar:hover,
+.panes > .resize-bar:hover > .resize-handle {
+	cursor: ew-resize;
+	border-color: lightblue;
+}
+
+.panes > .resize-bar > .resize-handle {
+	width: 1em;
+	height: 1em;
+	position: absolute;
+	top: 50%;
+	bottom: 50%;
+	left: calc(-.5em - var(--resize-bar-width));
+	z-index: 101;
+	border-style: solid;
+	border-color: #999999;
+	border-width: 1px;
+	border-radius: 3px;
+	background-color: white;
+	color: lightblue;
+	text-align: center;
+	line-height: 0.75em;
+}
+
+.panes > .resize-bar > .resize-handle::before {
+	content: "<>";
+	font-size: 0.75em;
+}
+
+.panes > section.pane > button.toggle-expanded,
+.panes > section.pane > button.refresh {
+	color: lightblue;
+	border-style: solid;
+	border-width: 2px;
+	border-color: lightblue;
+	width: 2em;
+	height: 3em;
+	position: absolute;
+	top: 0;
+	background-color: transparent;
+}
+
+.panes > section.pane.expanded {
+	width: 90%;
+}
+
+.panes.narrow > section.pane {
+	display: none;
+}
+
+.panes.narrow > section.pane.expanded {
+	display: block;
+	width: 100%;
+}
+
+.panes > section.pane.left.expanded:has(+ section.pane.right.expanded) {
+	position-anchor: --resize-bar;
+	right: calc(anchor(left) - var(--resize-bar-width));
+	width: auto;
+}
+
+.panes > section.pane.left.expanded + section.pane.right.expanded {
+	position-anchor: --resize-bar;
+	left: anchor(left);
+	width: auto;
+}
+
+.panes > section.pane > button.toggle-expanded::before,
+.panes > section.pane > button.refresh::before {
+	font-size: 1.5em;
+}
+
+.panes > section.pane > button.toggle-expanded:hover,
+.panes > section.pane > button.refresh:hover {
+	border-width: 3px;
+}
+
+.panes > section.pane.left > button.toggle-expanded {
+	right: 0;
+}
+
+.panes > section.pane.right > button.toggle-expanded {
+	left: 0;
+}
+
+.panes > section.pane.left > button.refresh {
+	right: 2em;
+}
+
+.panes > section.pane.right > button.refresh {
+	left: 2em;
+}
+
+.panes > section.pane > button.refresh::before {
+	content: "\21BB"
+}
+
+.panes > section.pane.left > button.toggle-expanded::before,
+.panes > section.pane.right.expanded > button.toggle-expanded::before {
+	content: "\276F";
+}
+
+.panes > section.pane.right > button.toggle-expanded::before,
+.panes > section.pane.left.expanded > button.toggle-expanded::before {
+	content: "\276E";
+}
