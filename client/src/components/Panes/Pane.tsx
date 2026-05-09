@@ -18,7 +18,7 @@ export default function Pane ({
 	return (
 		<section className={classNames.join(" ")}>
 			<ToggleExpandedButton onClick={onExpansionToggle} expanded={expanded} side={side} />
-			<RefreshButton onClick={onRefresh} />
+			<RefreshButton onClick={onRefresh} side={side} />
 			{renderContent()}
 		</section>
 	);
@@ -46,6 +46,7 @@ function ToggleExpandedButton ({
 	return (
 		<button
 			className="toggle-expanded"
+			title={`toggle ${side} pane expanded`}
 			onClick={onClick}
 			aria-expanded={expanded}
 			aria-label={`toggle ${side} pane expanded`}
@@ -53,11 +54,18 @@ function ToggleExpandedButton ({
 	);
 }
 
-function RefreshButton ({onClick}: {onClick?: NoArgsCallback}) {
+function RefreshButton ({onClick, side}: {onClick?: NoArgsCallback, side: Side}) {
 	let content = null;
 
 	if (onClick) {
-		content = <button className="refresh" onClick={onClick}></button>;
+		content = (
+			<button
+				className="refresh"
+				title={`refresh ${side} pane`}
+				onClick={onClick}
+				aria-label={`refresh ${side} pane`}
+			/>
+		);
 	}
 
 	return content;
