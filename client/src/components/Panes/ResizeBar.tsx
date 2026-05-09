@@ -18,13 +18,28 @@ export default function ResizeBar ({containerRef, showing, minLeftWidth, minRigh
 	}
 
 	return (
-		<div className="resize-bar" style={style} onMouseDown={startDrag}>
+		<div
+			className="resize-bar"
+			style={style}
+			onMouseDown={startDrag}
+			onKeyDown={handleKeyDown}
+			tabIndex={0}
+			role="separator"
+			aria-orientation="vertical"
+			aria-valuenow={percentFromLeft}
+			aria-valuetext={`Left pane ${percentFromLeft}% of available width`}
+		>
 			<div className="resize-handle"></div>
 		</div>
 	);
 }
 
-function useClampedPositionManager ({showing, containerRef, minLeftWidth, minRightWidth}: ResizeBarProps): [number, () => void] {
+function useClampedPositionManager ({
+	showing,
+	containerRef,
+	minLeftWidth,
+	minRightWidth
+}: ResizeBarProps): [number, () => void, (event: React.KeyboardEvent) => void] {
 	const [percentFromLeft, setPercentFromLeft] = useState<number>(50),
 		[dragStarted, setDragStarted] = useState<boolean>(false),
 		dragging = showing && dragStarted;
@@ -38,11 +53,46 @@ function useClampedPositionManager ({showing, containerRef, minLeftWidth, minRig
 			maximumPercentage = minimumPercentage;
 		}
 
+		minimumPercentage = Math.max(0, Math.min(minimumPercentage, 100));
+		maximumPercentage = Math.max(0, Math.min(maximumPercentage, 100));
+
 		return Math.max(minimumPercentage, Math.min(rawPercentage, maximumPercentage));
 	}
 
 	function startDrag () {
 		setDragStarted(true);
+	}
+
+	function handleKeyDown (event: React.KeyboardEvent) {
+		const stepSize = 5,
+			containerWidth = containerRef.current?.clientWidth;
+
+		if (containerWidth != null) {
+			switch (event.key) {
+				case "ArrowLeft":
+					event.preventDefault();
+					setPercentFromLeft((current: number) => clampPercentage(
+						current - stepSize,
+						containerWidth
+					));
+					break;
+				case "ArrowRight":
+					event.preventDefault();
+					setPercentFromLeft((current: number) => clampPercentage(
+						current + stepSize,
+						containerWidth
+					));
+					break;
+				case "Home":
+					event.preventDefault();
+					setPercentFromLeft(clampPercentage(0, containerWidth));
+					break;
+				case "End":
+					event.preventDefault();
+					setPercentFromLeft(clampPercentage(100, containerWidth));
+					break;
+			}
+		}
 	}
 
 	useReclampPositionWhileShowing({

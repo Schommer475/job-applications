@@ -17,8 +17,8 @@ export default function Pane ({
 
 	return (
 		<section className={classNames.join(" ")}>
-			<ToggleExpandedButton onClick={onExpansionToggle}/>
-			<RefreshButton onClick={onRefresh}/>
+			<ToggleExpandedButton onClick={onExpansionToggle} expanded={expanded} side={side} />
+			<RefreshButton onClick={onRefresh} />
 			{renderContent()}
 		</section>
 	);
@@ -36,8 +36,19 @@ function toContentRenderer (content: React.ReactNode | (() => React.ReactNode)):
 	return builder;
 }
 
-function ToggleExpandedButton ({onClick}: {onClick: NoArgsCallback}) {
-	return <button className="toggle-expanded" onClick={onClick}></button>
+function ToggleExpandedButton ({
+	onClick,
+	expanded,
+	side
+}: {onClick: NoArgsCallback, expanded: boolean, side: Side}) {
+	return (
+		<button
+			className="toggle-expanded"
+			onClick={onClick}
+			aria-expanded={expanded}
+			aria-label={`toggle ${side} pane expanded`}
+		/>
+	);
 }
 
 function RefreshButton ({onClick}: {onClick?: NoArgsCallback}) {
