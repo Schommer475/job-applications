@@ -3,6 +3,7 @@ import ResizeBar, {resizeBarWidth} from "./ResizeBar.tsx";
 import "./Panes.css";
 import type {Side} from "./types.tsx";
 import {useState, useRef, useEffectEvent, useEffect, useImperativeHandle} from "react";
+import type {NoArgsCallback} from "../../types/callbacks.tsx";
 
 export default function Panes ({ref, left, right, narrowWidth, onNarrowChanged}: PanesProps) {
 	const containerRef = useRef<HTMLDivElement>(null),
@@ -83,6 +84,7 @@ export default function Panes ({ref, left, right, narrowWidth, onNarrowChanged}:
 			/>
 			<Pane
 				side="left"
+				label={left.label}
 				expanded={expanded === "both" || expanded === "left"}
 				content={left.content}
 				onExpansionToggle={() => handleExpansionToggle("left")}
@@ -90,6 +92,7 @@ export default function Panes ({ref, left, right, narrowWidth, onNarrowChanged}:
 			/>
 			<Pane
 				side="right"
+				label={right.label}
 				expanded={expanded === "both" || expanded === "right"}
 				content={right.content}
 				onExpansionToggle={() => handleExpansionToggle("right")}
@@ -233,9 +236,10 @@ type PanesProps = {
 };
 
 type PaneProps = {
+	label?: string,
 	minWidth?: number,
 	content: React.ReactNode | (() => React.ReactNode),
-	onRefresh?: () => unknown
+	onRefresh?: NoArgsCallback
 };
 
 type UseNarrowAtTransitionWidthProps = {

@@ -1,7 +1,9 @@
 import React from "react";
 import type {Side} from "./types.tsx";
+import type {NoArgsCallback} from "../../types/callbacks.tsx";
 
 export default function Pane ({
+	label,
 	side,
 	expanded,
 	content,
@@ -16,7 +18,7 @@ export default function Pane ({
 	}
 
 	return (
-		<section className={classNames.join(" ")}>
+		<section className={classNames.join(" ")} aria-label={label}>
 			<ToggleExpandedButton onClick={onExpansionToggle} expanded={expanded} side={side} />
 			<RefreshButton onClick={onRefresh} side={side} />
 			{renderContent()}
@@ -71,9 +73,8 @@ function RefreshButton ({onClick, side}: {onClick?: NoArgsCallback, side: Side})
 	return content;
 }
 
-type NoArgsCallback = () => unknown;
-
 type PaneProps = {
+	label?: string,
 	onRefresh?: NoArgsCallback,
 	onExpansionToggle: NoArgsCallback,
 	side: Side,
