@@ -24,7 +24,9 @@ export default function Pane ({
 	);
 }
 
-function toContentRenderer (content: React.ReactNode | (() => React.ReactNode)): () => React.ReactNode {
+function toContentRenderer (content:
+	React.ReactNode | (() => React.ReactNode)
+): () => React.ReactNode {
 	let builder: () => React.ReactNode;
 
 	if (typeof content === "function") {
@@ -69,4 +71,4 @@ type PaneProps = {
 	side: Side,
 	expanded: boolean,
 	content: React.ReactNode | (() => React.ReactNode)
-}
+};

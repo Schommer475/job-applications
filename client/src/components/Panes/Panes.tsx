@@ -11,7 +11,11 @@ export default function Panes ({ref, left, right, narrowWidth, onNarrowChanged}:
 		classNames = ["panes"],
 		minLeftWidth = coercePositive(left.minWidth),
 		minRightWidth = coercePositive(right.minWidth),
-		transitionWidth = computeTransitionWidth(coercePositive(narrowWidth), minLeftWidth, minRightWidth),
+		transitionWidth = computeTransitionWidth(
+			coercePositive(narrowWidth),
+			minLeftWidth,
+			minRightWidth
+		),
 		narrow = useNarrowAtTransitionWidth({
 			containerRef,
 			transitionWidth,
@@ -52,7 +56,7 @@ export default function Panes ({ref, left, right, narrowWidth, onNarrowChanged}:
 					endState = "both";
 				}
 
-				return endState
+				return endState;
 			});
 		}
 	}), []);
@@ -71,18 +75,21 @@ export default function Panes ({ref, left, right, narrowWidth, onNarrowChanged}:
 
 	return (
 		<div ref={containerRef} className={classNames.join(" ")} style={style}>
-			<ResizeBar showing={!narrow && expanded === "both"}
+			<ResizeBar
+				showing={!narrow && expanded === "both"}
 				containerRef={containerRef}
 				minLeftWidth={minLeftWidth}
 				minRightWidth={minRightWidth}
 			/>
-			<Pane side="left"
+			<Pane
+				side="left"
 				expanded={expanded === "both" || expanded === "left"}
 				content={left.content}
 				onExpansionToggle={() => handleExpansionToggle("left")}
 				onRefresh={left.onRefresh}
 			/>
-			<Pane side="right"
+			<Pane
+				side="right"
 				expanded={expanded === "both" || expanded === "right"}
 				content={right.content}
 				onExpansionToggle={() => handleExpansionToggle("right")}
@@ -106,7 +113,11 @@ function computeTransitionWidth (userWidth: number, minLeftWidth: number, minRig
 	return Math.max(userWidth, minTransitionWidth);
 }
 
-function useNarrowAtTransitionWidth ({containerRef, transitionWidth, onNarrowChanged}: UseNarrowAtTransitionWidthProps) {
+function useNarrowAtTransitionWidth ({
+	containerRef,
+	transitionWidth,
+	onNarrowChanged
+}: UseNarrowAtTransitionWidthProps) {
 	const [narrow, setNarrow] = useState<boolean>(false);
 
 	function notifyNarrowChangedIfDifferent (isNarrow: boolean) {
@@ -150,7 +161,12 @@ function oppositeSide (side: Side) {
 	return opposite;
 }
 
-function useNarrowCheckOnTransitionWidthChange ({containerRef, transitionWidth, onNarrowSet, setNarrow}: NarrowManagementHookProps) {
+function useNarrowCheckOnTransitionWidthChange ({
+	containerRef,
+	transitionWidth,
+	onNarrowSet,
+	setNarrow
+}: NarrowManagementHookProps) {
 	const onNarrowSetEvent = useEffectEvent((isNarrow: boolean) => {
 		onNarrowSet(isNarrow);
 	});
@@ -168,7 +184,12 @@ function useNarrowCheckOnTransitionWidthChange ({containerRef, transitionWidth, 
 	}, [containerRef, transitionWidth, setNarrow]);
 }
 
-function useNarrowCheckOnResize ({containerRef, transitionWidth, onNarrowSet, setNarrow}: NarrowManagementHookProps) {
+function useNarrowCheckOnResize ({
+	containerRef,
+	transitionWidth,
+	onNarrowSet,
+	setNarrow
+}: NarrowManagementHookProps) {
 	const onContainerWidthChanged = useEffectEvent((newWidth: number) => {
 		const isNarrow = newWidth <= transitionWidth;
 
@@ -194,7 +215,7 @@ function useNarrowCheckOnResize ({containerRef, transitionWidth, onNarrowSet, se
 			observer.observe(container);
 			cleanup = () => {
 				observer.disconnect();
-			}
+			};
 		}
 
 		return cleanup;
@@ -204,27 +225,27 @@ function useNarrowCheckOnResize ({containerRef, transitionWidth, onNarrowSet, se
 type ExpandedPanes = Side | "both";
 
 type PanesProps = {
-	ref?: React.RefObject<PanesAPI|null>
+	ref?: React.RefObject<PanesAPI | null>,
 	left: PaneProps,
 	right: PaneProps,
 	narrowWidth?: number,
 	onNarrowChanged?: (narrow: boolean) => unknown
-}
+};
 
 type PaneProps = {
 	minWidth?: number,
 	content: React.ReactNode | (() => React.ReactNode),
-	onRefresh?: () => unknown,
-}
+	onRefresh?: () => unknown
+};
 
 type UseNarrowAtTransitionWidthProps = {
-	containerRef: React.RefObject<HTMLDivElement|null>,
+	containerRef: React.RefObject<HTMLDivElement | null>,
 	transitionWidth: number,
 	onNarrowChanged: (isNarrow: boolean) => unknown
 };
 
 type NarrowManagementHookProps = {
-	containerRef: React.RefObject<HTMLDivElement|null>,
+	containerRef: React.RefObject<HTMLDivElement | null>,
 	transitionWidth: number,
 	onNarrowSet: (isNarrow: boolean) => unknown,
 	setNarrow: React.Dispatch<React.SetStateAction<boolean>>

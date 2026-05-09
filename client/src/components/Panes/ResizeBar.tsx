@@ -2,8 +2,13 @@ import React, {useState, useEffect, useEffectEvent} from "react";
 
 export const resizeBarWidth = 1;
 
-export default function ResizeBar ({containerRef, showing, minLeftWidth, minRightWidth}: ResizeBarProps) {
-	const [percentFromLeft, startDrag] = useClampedPositionManager({
+export default function ResizeBar ({
+	containerRef,
+	showing,
+	minLeftWidth,
+	minRightWidth
+}: ResizeBarProps) {
+	const [percentFromLeft, startDrag, handleKeyDown] = useClampedPositionManager({
 			showing,
 			containerRef,
 			minLeftWidth,
@@ -49,7 +54,9 @@ function useClampedPositionManager ({
 			maximumPercentage: number = ((containerWidth - minRightWidth) / containerWidth) * 100;
 
 		if (minimumPercentage > maximumPercentage) {
-			minimumPercentage = (minLeftWidth / (minLeftWidth + resizeBarWidth + minRightWidth)) * 100;
+			minimumPercentage = (
+				minLeftWidth / (minLeftWidth + resizeBarWidth + minRightWidth)
+			) * 100;
 			maximumPercentage = minimumPercentage;
 		}
 
@@ -117,15 +124,23 @@ function useClampedPositionManager ({
 		setPercentFromLeft
 	});
 
-	return [percentFromLeft, startDrag];
+	return [percentFromLeft, startDrag, handleKeyDown];
 }
 
-function useReclampPositionWhileShowing ({showing, containerRef, clampPercentage, setPercentFromLeft}: UseReclampPositionWhileShowingProps) {
+function useReclampPositionWhileShowing ({
+	showing,
+	containerRef,
+	clampPercentage,
+	setPercentFromLeft
+}: UseReclampPositionWhileShowingProps) {
 	useEffect(() => {
 		const container = containerRef.current;
 
 		if (showing && container) {
-			setPercentFromLeft((current: number) => clampPercentage(current, container.clientWidth));
+			setPercentFromLeft((current: number) => clampPercentage(
+				current,
+				container.clientWidth
+			));
 		}
 	}, [
 		containerRef,
@@ -135,10 +150,22 @@ function useReclampPositionWhileShowing ({showing, containerRef, clampPercentage
 	]);
 }
 
-function useDragEffect ({dragging, containerRef, clampPercentage, setDragStarted, setPercentFromLeft}: UseDragEffectProps) {
+function useDragEffect ({
+	dragging,
+	containerRef,
+	clampPercentage,
+	setDragStarted,
+	setPercentFromLeft
+}: UseDragEffectProps) {
 	const onMouseMove = useEffectEvent((event: MouseEvent, container: HTMLDivElement) => {
-		const mousePositionPercentage = computeMousePercentage(event, container),
-			clampedPositionPercentage = clampPercentage(mousePositionPercentage, container.clientWidth);
+		const mousePositionPercentage = computeMousePercentage(
+				event,
+				container
+			),
+			clampedPositionPercentage = clampPercentage(
+				mousePositionPercentage,
+				container.clientWidth
+			);
 
 		setPercentFromLeft(clampedPositionPercentage);
 	});
@@ -170,7 +197,12 @@ function useDragEffect ({dragging, containerRef, clampPercentage, setDragStarted
 	}, [dragging, containerRef, setDragStarted]);
 }
 
-function useReclampPositionOnResize ({showing, containerRef, clampPercentage, setPercentFromLeft}: UseReclampPositionOnResizeProps) {
+function useReclampPositionOnResize ({
+	showing,
+	containerRef,
+	clampPercentage,
+	setPercentFromLeft
+}: UseReclampPositionOnResizeProps) {
 	const onContainerWidthChanged = useEffectEvent((newWidth: number) => {
 		setPercentFromLeft(currentPercent => clampPercentage(currentPercent, newWidth));
 	});
@@ -193,7 +225,7 @@ function useReclampPositionOnResize ({showing, containerRef, clampPercentage, se
 			observer.observe(container);
 			cleanup = () => {
 				observer.disconnect();
-			}
+			};
 		}
 
 		return cleanup;
@@ -211,7 +243,7 @@ function computeMousePercentage (event: MouseEvent, container: HTMLDivElement) {
 }
 
 type ResizeBarProps = {
-	containerRef: React.RefObject<HTMLDivElement|null>,
+	containerRef: React.RefObject<HTMLDivElement | null>,
 	showing: boolean,
 	minLeftWidth: number,
 	minRightWidth: number
@@ -219,14 +251,14 @@ type ResizeBarProps = {
 
 type UseReclampPositionWhileShowingProps = {
 	showing: boolean,
-	containerRef: React.RefObject<HTMLDivElement|null>,
+	containerRef: React.RefObject<HTMLDivElement | null>,
 	clampPercentage: ClampPercentageFunction,
 	setPercentFromLeft: React.Dispatch<React.SetStateAction<number>>
 };
 
 type UseDragEffectProps = {
 	dragging: boolean,
-	containerRef: React.RefObject<HTMLDivElement|null>,
+	containerRef: React.RefObject<HTMLDivElement | null>,
 	clampPercentage: ClampPercentageFunction,
 	setPercentFromLeft: React.Dispatch<React.SetStateAction<number>>,
 	setDragStarted: React.Dispatch<React.SetStateAction<boolean>>
@@ -234,7 +266,7 @@ type UseDragEffectProps = {
 
 type UseReclampPositionOnResizeProps = {
 	showing: boolean,
-	containerRef: React.RefObject<HTMLDivElement|null>,
+	containerRef: React.RefObject<HTMLDivElement | null>,
 	clampPercentage: ClampPercentageFunction,
 	setPercentFromLeft: React.Dispatch<React.SetStateAction<number>>
 };
