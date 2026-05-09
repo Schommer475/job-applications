@@ -29,15 +29,15 @@ export default function Pane ({
 function toContentRenderer (content:
 	React.ReactNode | (() => React.ReactNode)
 ): () => React.ReactNode {
-	let builder: () => React.ReactNode;
+	let renderer: () => React.ReactNode;
 
 	if (typeof content === "function") {
-		builder = content;
+		renderer = content;
 	} else {
-		builder = () => content;
+		renderer = () => content;
 	}
 
-	return builder;
+	return renderer;
 }
 
 function ToggleExpandedButton ({
