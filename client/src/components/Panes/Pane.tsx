@@ -26,6 +26,7 @@ export default function Pane ({
 	);
 }
 
+// function form ensures the content has access to any context at the panel or above
 function toContentRenderer (content:
 	React.ReactNode | (() => React.ReactNode)
 ): () => React.ReactNode {
