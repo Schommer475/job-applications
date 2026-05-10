@@ -1,0 +1,131 @@
+.tabs {
+	width: 100%;
+	height: 100%;
+}
+
+.tabs > .tab-ribbon {
+	width: 100%;
+	height: 1.75em;
+	overflow-x: scroll;
+	scrollbar-width: none;
+	display: flex;
+	flex-wrap: nowrap;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	-ms-overflow-style: none;
+	&::-webkit-scrollbar {
+	  display: none;
+	}
+}
+
+.tabs > .tab-ribbon > li {
+	--active-tab-background-color: white;
+	--inactive-tab-background-color: #e9e9e9;
+	--inactive-tab-hover-background-color: #d1d1d1;
+	container-type: inline-size;
+	flex: 1 1 7ch;
+	min-width: 6ch;
+	max-width: 15ch;
+	display: flex;
+	flex-wrap: nowrap;
+	height: calc(100% - 1px);
+	border-bottom: 1px solid #999999;
+	background-color: var(--inactive-tab-background-color);
+	border-left: 1px solid #999999;
+	white-space: nowrap;
+}
+
+.tabs > .tab-ribbon > li:last-child {
+	border-right: 1px solid #999999;
+}
+
+.tabs > .tab-ribbon > li.active {
+	background-color: var(--active-tab-background-color);
+	border-bottom-style: none;
+}
+
+.tabs > .tab-ribbon > li:not(.active):hover {
+	background-color: var(--inactive-tab-hover-background-color);
+}
+
+.tabs > .tab-ribbon > li > button {
+	height: 100%;
+	background: transparent;
+	border-style: none;
+}
+
+.tabs > .tab-ribbon > li > button.activate {
+	flex-grow: 1;
+	flex-shrink: 1;
+	overflow: hidden;
+	text-align: left;
+	position: relative;
+}
+
+.tabs > .tab-ribbon > li > button.activate::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 1em;
+	height: 100%;
+	background: linear-gradient(to right, transparent, var(--inactive-tab-background-color));
+}
+
+.tabs > .tab-ribbon > li:hover > button.activate::after {
+	background: linear-gradient(to right, transparent, var(--inactive-tab-hover-background-color));
+}
+
+.tabs > .tab-ribbon > li.active > button.activate::after {
+	background: linear-gradient(to right, transparent, var(--active-tab-background-color));
+}
+
+.tabs > .tab-ribbon > li.active:hover > button.activate::after {
+	width: 2em;
+}
+
+.tabs > .tab-ribbon > li > button.refresh,
+.tabs > .tab-ribbon > li > button.close {
+	padding-left: 2px;
+	flex-shrink: 0;
+	flex-grow: 0;
+	display: none;
+	transition: all 0.2s ease;
+}
+
+@container (min-width: 11ch) {
+	.tabs > .tab-ribbon > li > button.refresh,
+	.tabs > .tab-ribbon > li > button.close {
+		display: block;
+	}
+}
+
+.tabs > .tab-ribbon > li.active > button.refresh,
+.tabs > .tab-ribbon > li.active > button.close,
+.tabs > .tab-ribbon > li:focus-within > button.refresh,
+.tabs > .tab-ribbon > li:focus-within > button.close {
+	display: block;
+}
+
+.tabs > .tab-ribbon > li > button.refresh::before {
+	content: "\21BB"
+}
+
+.tabs > .tab-ribbon > li > button.close::before {
+	content: "\00d7"
+}
+
+.tabs > .tab-ribbon > li > button.refresh:hover,
+.tabs > .tab-ribbon > li > button.close:hover {
+	background-color: #bfbfbf;
+}
+
+.tabs > .tab-panels > .tab-panel {
+	display: none;
+	overflow: hidden;
+}
+
+.tabs > .tab-panels > .tab-panel.active {
+	display: block;
+}
