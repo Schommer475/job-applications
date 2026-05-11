@@ -103,8 +103,8 @@
 
 .tabs > .tab-ribbon > li.active > button.refresh,
 .tabs > .tab-ribbon > li.active > button.close,
-.tabs > .tab-ribbon > li:focus-within > button.refresh,
-.tabs > .tab-ribbon > li:focus-within > button.close {
+.tabs > .tab-ribbon > li:has(:focus-visible) > button.refresh,
+.tabs > .tab-ribbon > li:has(:focus-visible) > button.close {
 	display: block;
 }
 
