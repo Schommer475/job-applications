@@ -1,18 +1,20 @@
 import TabHandle from "./TabHandle.tsx";
 import type {TabHandleProps} from "./TabHandle.tsx";
-import {useEffect, useRef} from "react";
+import React, {useEffect, useRef} from "react";
 
-export default function TabRibbon ({tabs}: {tabs: TabHandleProps[]}) {
+export default function TabRibbon ({activeTabId, tabs}: TabRibbonProps) {
 	const ribbonRef = useRef<HTMLUListElement | null>(null);
 
 	useHorizontalScrolling(ribbonRef);
+	useScrollIntoViewOnActivation(ribbonRef, activeTabId);
 
 	return (
 		<ul ref={ribbonRef} className="tab-ribbon" role="tablist">
 			{tabs.map(props => {
-				const classNames = ["tab-handle"];
+				const classNames = ["tab-handle"],
+					active = props.id === activeTabId;
 
-				if (props.active) {
+				if (active) {
 					classNames.push("active");
 				}
 
@@ -23,7 +25,7 @@ export default function TabRibbon ({tabs}: {tabs: TabHandleProps[]}) {
 						role="presentation"
 						title={props.label}
 					>
-						<TabHandle {...props} />
+						<TabHandle active={active} {...props} />
 					</li>
 				);
 			})}
@@ -31,7 +33,7 @@ export default function TabRibbon ({tabs}: {tabs: TabHandleProps[]}) {
 	);
 }
 
-function useHorizontalScrolling (elementRef: React.RefObject<HTMLElement | null>) {
+function useHorizontalScrolling (elementRef: ElementRef) {
 	useEffect(() => {
 		const element = elementRef.current;
 
@@ -57,3 +59,22 @@ function useHorizontalScrolling (elementRef: React.RefObject<HTMLElement | null>
 		return cleanup;
 	}, [elementRef]);
 }
+
+function useScrollIntoViewOnActivation (scrollContainerRef: ElementRef, activeTabId: ActiveTabId) {
+	useEffect(() => {
+		const scrollContainer = scrollContainerRef.current;
+
+		if (scrollContainer && activeTabId !== null) {
+			scrollContainer.querySelector("li.active")?.scrollIntoView();
+		}
+	}, [scrollContainerRef, activeTabId]);
+}
+
+type TabRibbonProps = {
+	activeTabId: ActiveTabId,
+	tabs: Omit<TabHandleProps, "active">[]
+};
+
+type ActiveTabId = string | null;
+
+type ElementRef = React.RefObject<HTMLElement | null>;

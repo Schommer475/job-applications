@@ -18,10 +18,9 @@ export default function Tabs ({activeTabId, tabs}: TabsProps) {
 	return (
 		<TabsContext value={id}>
 			<div className="tabs">
-				<TabRibbon tabs={tabs.map(({id, label, onSelected, onClose, onRefresh}) => ({
+				<TabRibbon activeTabId={activeTab} tabs={tabs.map(({id, label, onSelected, onClose, onRefresh}) => ({
 					id,
 					label,
-					active: id === activeTab,
 					onClick: onSelected,
 					onClose,
 					onRefresh
