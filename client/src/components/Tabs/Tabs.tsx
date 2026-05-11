@@ -18,19 +18,22 @@ export default function Tabs ({activeTabId, tabs}: TabsProps) {
 	return (
 		<TabsContext value={id}>
 			<div className="tabs">
-				<TabRibbon activeTabId={activeTab} tabs={tabs.map(({id, label, onSelected, onClose, onRefresh}) => ({
-					id,
-					label,
-					onClick: onSelected,
-					onClose,
-					onRefresh
-				}))}
+				<TabRibbon
+					activeTabId={activeTab}
+					tabs={tabs.map(({id, label, onSelected, onClose, onRefresh}) => ({
+						id,
+						label,
+						onClick: onSelected,
+						onClose,
+						onRefresh
+					}))}
 				/>
-				<TabPanels tabs={tabs.map(({id, content}) => ({
-					id,
-					active: id === activeTab,
-					content
-				}))}
+				<TabPanels
+					activeTabId={activeTab}
+					tabs={tabs.map(({id, content}) => ({
+						id,
+						content
+					}))}
 				/>
 			</div>
 		</TabsContext>
