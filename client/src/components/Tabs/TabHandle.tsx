@@ -1,15 +1,28 @@
 import type {NoArgsCallback} from "../../types/callbacks.tsx";
-import {useTabFullIds} from "./TabsContext.tsx";
+import React from "react";
 
 export default function TabHandle ({
-	id,
+	handleId,
+	panelId,
 	label,
 	active,
-	onClick,
+	focusable,
+	onSelected,
 	onRefresh,
 	onClose
 }: TabHandleProps) {
-	const {handleId, panelId} = useTabFullIds(id);
+	let tabIndex = -1;
+
+	if (focusable) {
+		tabIndex = 0;
+	}
+
+	function handleKeyDown (event: React.KeyboardEvent) {
+		if (event.key === "Delete") {
+			event.preventDefault();
+			onClose?.();
+		}
+	}
 
 	return (
 		<>
@@ -17,7 +30,9 @@ export default function TabHandle ({
 				id={handleId}
 				className="activate"
 				role="tab"
-				onClick={onClick}
+				tabIndex={tabIndex}
+				onKeyDown={handleKeyDown}
+				onClick={onSelected}
 				title={label}
 				aria-label={label}
 				aria-controls={panelId}
@@ -38,6 +53,7 @@ function RefreshButton ({onClick, tabLabel}: NestedButtonProps) {
 		content = (
 			<button
 				className="refresh"
+				tabIndex={-1}
 				onClick={onClick}
 				aria-label={`refresh tab: ${tabLabel}`}
 			/>
@@ -54,6 +70,7 @@ function CloseButton ({onClick, tabLabel}: NestedButtonProps) {
 		content = (
 			<button
 				className="close"
+				tabIndex={-1}
 				onClick={onClick}
 				aria-label={`close tab: ${tabLabel}`}
 			/>
@@ -64,10 +81,12 @@ function CloseButton ({onClick, tabLabel}: NestedButtonProps) {
 }
 
 export type TabHandleProps = {
-	id: string,
+	handleId: string,
+	panelId: string,
 	label: string,
 	active: boolean,
-	onClick: NoArgsCallback,
+	focusable: boolean,
+	onSelected: NoArgsCallback,
 	onRefresh?: NoArgsCallback,
 	onClose?: NoArgsCallback
 };
