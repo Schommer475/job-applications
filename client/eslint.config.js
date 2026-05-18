@@ -62,7 +62,10 @@ export default defineConfig([
 			"@stylistic/indent-binary-ops": ["error", "tab"],
 			"@stylistic/jsx-indent-props": ["error", "tab"],
 			"@stylistic/brace-style": ["error", "1tbs"],
-			"@stylistic/jsx-one-expression-per-line": "off"
+			"@stylistic/jsx-one-expression-per-line": "off",
+			"@typescript-eslint/no-unused-vars": ["error", {
+				"ignoreRestSiblings": true
+			}]
 		}
 	}
 ]);
