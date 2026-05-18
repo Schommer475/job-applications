@@ -14,6 +14,21 @@ A full-stack web app for tracking job applications and interviews during a job s
 
 ---
 
+## Technical Decisions
+
+### React Compiler (client)
+
+The client uses the React 19 compiler, which handles memoization automatically. Manual use of `useMemo` and `useCallback` is therefore generally unnecessary and has been omitted — their absence is intentional, not an oversight.
+
+### JWT Strategy
+
+Two choices here differ from common production patterns, both accepted as complexity tradeoffs given the project's scope:
+
+- **Token duration:** Tokens are issued with a day-long expiry rather than a short lifespan backed by a refresh token. A refresh token flow adds meaningful implementation surface (rotation, storage, race conditions) that isn't warranted at this scale.
+- **Logout:** Logout clears the client-side cookie rather than blacklisting the token server-side. True token invalidation requires a shared revocation store (e.g., Redis), which is out of scope here. The day-long expiry limits the practical exposure window.
+
+---
+
 ## API
 
 All position routes require `Authorization: Bearer <token>` obtained from `POST /auth/login`.
