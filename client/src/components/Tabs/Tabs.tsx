@@ -7,7 +7,12 @@ import "./Tabs.css";
 
 export type {InputTab, OnCloseProps};
 
-export default function Tabs ({ref, initialTabs, initialActiveTabId}: TabsProps) {
+export default function Tabs ({
+	ref,
+	initialTabs,
+	initialActiveTabId,
+	emptyText = "No tabs open"
+}: TabsProps) {
 	const tabsPrefix = useId(),
 		{
 			tabs,
@@ -16,7 +21,10 @@ export default function Tabs ({ref, initialTabs, initialActiveTabId}: TabsProps)
 			addTab,
 			activateTab,
 			removeTab
-		} = useTabsState({tabsPrefix, initialTabs, initialActiveTabId});
+		} = useTabsState({tabsPrefix, initialTabs, initialActiveTabId}),
+		style = {
+			"--no-tabs-text": `"${emptyText}"`
+		} as React.CSSProperties;
 
 	useImperativeHandle(ref, () => ({
 		hasTab,
@@ -27,7 +35,7 @@ export default function Tabs ({ref, initialTabs, initialActiveTabId}: TabsProps)
 	}), [hasTab, addTab, activateTab, removeTab, activeTabId]);
 
 	return (
-		<div className="tabs">
+		<div className="tabs"style={style}>
 			<TabRibbon
 				activeTabId={activeTabId}
 				tabs={tabs}
@@ -51,5 +59,6 @@ export interface TabsAPI {
 type TabsProps = {
 	ref?: React.RefObject<TabsAPI | null>,
 	initialTabs?: InputTab[],
-	initialActiveTabId?: string
+	initialActiveTabId?: string,
+	emptyText?: string
 };

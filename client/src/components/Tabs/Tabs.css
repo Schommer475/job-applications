@@ -126,6 +126,12 @@
 	height: calc(100% - 1.75em);
 }
 
+.tabs > .tab-panels:empty::before {
+	content: var(--no-tabs-text);
+	text-align: center;
+	display: block;
+}
+
 .tabs > .tab-panels > .tab-panel {
 	display: none;
 	overflow: hidden;
