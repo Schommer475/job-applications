@@ -1,5 +1,4 @@
 import React, {useEffect, useRef} from "react";
-import {useTabFullIds} from "./TabsContext.tsx";
 
 export default function TabPanels ({activeTabId, tabs}: TabPanelsProps) {
 	const panelsRef = useRef<HTMLDivElement | null>(null);
@@ -19,9 +18,8 @@ export default function TabPanels ({activeTabId, tabs}: TabPanelsProps) {
 	);
 }
 
-function TabPanel ({id, active, content}: TabPanelProps) {
-	const {panelId, handleId} = useTabFullIds(id),
-		renderContent = toContentRenderer(content),
+function TabPanel ({panelId, handleId, active, content}: TabPanelProps) {
+	const renderContent = toContentRenderer(content),
 		classNames = ["tab-panel"];
 
 	if (active) {
@@ -80,6 +78,8 @@ type TabPanelsProps = {
 
 type TabPanelProps = {
 	id: string,
+	handleId: string,
+	panelId: string,
 	active: boolean,
 	content: React.ReactNode | (() => React.ReactNode)
 };
