@@ -1,59 +1,55 @@
-import React, {useId} from "react";
+import React, {useId, useImperativeHandle} from "react";
 import TabRibbon from "./TabRibbon.tsx";
 import TabPanels from "./TabPanels.tsx";
-import type {NoArgsCallback} from "../../types/callbacks.tsx";
-import {TabsContext} from "./TabsContext.tsx";
+import useTabsState from "./useTabsState.tsx";
+import type {InputTab, OnCloseProps} from "./useTabsState.tsx";
 import "./Tabs.css";
 
-export default function Tabs ({activeTabId, tabs}: TabsProps) {
-	const id = useId();
+export type {InputTab, OnCloseProps};
 
-	let activeTab: string | null = activeTabId;
+export default function Tabs ({ref, initialTabs, initialActiveTabId}: TabsProps) {
+	const tabsPrefix = useId(),
+		{
+			tabs,
+			activeTabId,
+			hasTab,
+			addTab,
+			activateTab,
+			removeTab
+		} = useTabsState({tabsPrefix, initialTabs, initialActiveTabId});
 
-	if (activeTabNotPresent(activeTabId, tabs)) {
-		activeTab = tabs.at(0)?.id ?? null;
-		console.warn("active tab not present", activeTabId);
-	}
+	useImperativeHandle(ref, () => ({
+		hasTab,
+		addTab,
+		activateTab,
+		removeTab,
+		activeTabId
+	}), [hasTab, addTab, activateTab, removeTab, activeTabId]);
 
 	return (
-		<TabsContext value={id}>
-			<div className="tabs">
-				<TabRibbon
-					activeTabId={activeTab}
-					tabs={tabs.map(({id, label, onSelected, onClose, onRefresh}) => ({
-						id,
-						label,
-						onClick: onSelected,
-						onClose,
-						onRefresh
-					}))}
-				/>
-				<TabPanels
-					activeTabId={activeTab}
-					tabs={tabs.map(({id, content}) => ({
-						id,
-						content
-					}))}
-				/>
-			</div>
-		</TabsContext>
+		<div className="tabs">
+			<TabRibbon
+				activeTabId={activeTabId}
+				tabs={tabs}
+			/>
+			<TabPanels
+				activeTabId={activeTabId}
+				tabs={tabs}
+			/>
+		</div>
 	);
 }
 
-function activeTabNotPresent (activeTabId: string | null, tabs: TabProps[]) {
-	return tabs.findIndex(({id}) => id === activeTabId) === -1;
-}
-
-type TabsProps = {
-	activeTabId: string | null,
-	tabs: TabProps[]
+export interface TabsAPI {
+	hasTab: (tabId: string) => boolean,
+	addTab: (tab: InputTab, activate?: boolean) => void,
+	activateTab: (tabId: string) => void,
+	removeTab: (tabId: string) => void,
+	readonly activeTabId: string | null
 };
 
-type TabProps = {
-	id: string,
-	label: string,
-	onSelected: NoArgsCallback,
-	onClose?: NoArgsCallback,
-	onRefresh?: NoArgsCallback,
-	content: React.ReactNode | (() => React.ReactNode)
+type TabsProps = {
+	ref?: React.RefObject<TabsAPI | null>,
+	initialTabs?: InputTab[],
+	initialActiveTabId?: string
 };
