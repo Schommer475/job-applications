@@ -176,7 +176,7 @@ export type InputTab = {
 	 **/
 	onClose?: (props: OnCloseProps) => unknown,
 	onRefresh?: NoArgsCallback,
-	content: React.ReactNode | (() => React.ReactNode)
+	content: React.ReactNode
 };
 
 export type OnCloseProps = {

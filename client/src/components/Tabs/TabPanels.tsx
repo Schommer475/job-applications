@@ -19,8 +19,7 @@ export default function TabPanels ({activeTabId, tabs}: TabPanelsProps) {
 }
 
 function TabPanel ({panelId, handleId, active, content}: TabPanelProps) {
-	const renderContent = toContentRenderer(content),
-		classNames = ["tab-panel"];
+	const classNames = ["tab-panel"];
 
 	if (active) {
 		classNames.push("active");
@@ -34,24 +33,9 @@ function TabPanel ({panelId, handleId, active, content}: TabPanelProps) {
 			role="tabpanel"
 			aria-labelledby={handleId}
 		>
-			{renderContent()}
+			{content}
 		</div>
 	);
-}
-
-// function form ensures the content has access to any context at the panel or above
-function toContentRenderer (content:
-	React.ReactNode | (() => React.ReactNode)
-): () => React.ReactNode {
-	let renderer: () => React.ReactNode;
-
-	if (typeof content === "function") {
-		renderer = content;
-	} else {
-		renderer = () => content;
-	}
-
-	return renderer;
 }
 
 function useFocusPanelOnNonInitialActivation (containerRef: ElementRef, activeTabId: ActiveTabId) {
@@ -81,7 +65,7 @@ type TabPanelProps = {
 	handleId: string,
 	panelId: string,
 	active: boolean,
-	content: React.ReactNode | (() => React.ReactNode)
+	content: React.ReactNode
 };
 
 type ElementRef = React.RefObject<HTMLElement | null>;

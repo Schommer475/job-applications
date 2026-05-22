@@ -238,7 +238,7 @@ type PanesProps = {
 type PaneProps = {
 	label?: string,
 	minWidth?: number,
-	content: React.ReactNode | (() => React.ReactNode),
+	content: React.ReactNode,
 	onRefresh?: NoArgsCallback
 };
 

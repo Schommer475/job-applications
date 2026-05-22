@@ -10,8 +10,7 @@ export default function Pane ({
 	onExpansionToggle,
 	onRefresh
 }: PaneProps) {
-	const renderContent = toContentRenderer(content),
-		classNames = ["pane", side];
+	const classNames = ["pane", side];
 
 	if (expanded) {
 		classNames.push("expanded");
@@ -21,24 +20,9 @@ export default function Pane ({
 		<section className={classNames.join(" ")} aria-label={label}>
 			<ToggleExpandedButton onClick={onExpansionToggle} expanded={expanded} side={side} />
 			<RefreshButton onClick={onRefresh} side={side} />
-			{renderContent()}
+			{content}
 		</section>
 	);
-}
-
-// function form ensures the content has access to any context at the panel or above
-function toContentRenderer (content:
-	React.ReactNode | (() => React.ReactNode)
-): () => React.ReactNode {
-	let renderer: () => React.ReactNode;
-
-	if (typeof content === "function") {
-		renderer = content;
-	} else {
-		renderer = () => content;
-	}
-
-	return renderer;
 }
 
 function ToggleExpandedButton ({
@@ -80,5 +64,5 @@ type PaneProps = {
 	onExpansionToggle: NoArgsCallback,
 	side: Side,
 	expanded: boolean,
-	content: React.ReactNode | (() => React.ReactNode)
+	content: React.ReactNode
 };
