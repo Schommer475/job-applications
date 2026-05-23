@@ -7,20 +7,24 @@ export default function Pane ({
 	side,
 	expanded,
 	content,
+	collapsedContentPercentage,
 	onExpansionToggle,
 	onRefresh
 }: PaneProps) {
-	const classNames = ["pane", side];
+	const classNames = ["pane", side],
+		style = {
+			"--collapsed-content-percentage": `${collapsedContentPercentage}%`
+		} as React.CSSProperties;
 
 	if (expanded) {
 		classNames.push("expanded");
 	}
 
 	return (
-		<section className={classNames.join(" ")} aria-label={label}>
+		<section className={classNames.join(" ")} style={style} aria-label={label}>
 			<ToggleExpandedButton onClick={onExpansionToggle} expanded={expanded} side={side} />
 			<RefreshButton onClick={onRefresh} side={side} />
-			{content}
+			<div className="content-wrapper" inert={!expanded}>{content}</div>
 		</section>
 	);
 }
@@ -64,5 +68,6 @@ type PaneProps = {
 	onExpansionToggle: NoArgsCallback,
 	side: Side,
 	expanded: boolean,
-	content: React.ReactNode
+	content: React.ReactNode,
+	collapsedContentPercentage: number
 };

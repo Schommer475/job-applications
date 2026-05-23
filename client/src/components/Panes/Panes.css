@@ -7,6 +7,7 @@
 	overflow: hidden;
 	position: relative;
 	anchor-scope: --resize-bar;
+	--expanded-width: 90%;
 }
 
 .panes > section.pane {
@@ -14,18 +15,18 @@
 	top: 0;
 	bottom: 0;
 	overflow: hidden;
-	width: 10%;
+}
+
+.panes > section.pane > .content-wrapper {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
 }
 
 .panes > section.pane.left {
 	border-color: #999999;
 	border-right-style: solid;
 	border-right-width: var(--resize-bar-width);
-	left: 0;
-}
-
-.panes > section.pane.right {
-	right: 0;
 }
 
 .panes > .resize-bar {
@@ -83,7 +84,28 @@
 }
 
 .panes > section.pane.expanded {
-	width: 90%;
+	width: var(--expanded-width);
+}
+
+.panes > section.pane.left.expanded {
+	left: 0;
+}
+
+.panes > section.pane.right.expanded {
+	right: 0;
+}
+
+.panes > section.pane:not(.expanded) {
+	min-width: calc(100% - var(--expanded-width));
+	width: var(--collapsed-content-percentage);
+}
+
+.panes > section.pane.left:not(.expanded) {
+	right: var(--expanded-width);
+}
+
+.panes > section.pane.right:not(.expanded) {
+	left: var(--expanded-width);
 }
 
 .panes.narrow > section.pane {

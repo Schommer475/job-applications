@@ -5,12 +5,15 @@ export const resizeBarWidth = 1;
 export default function ResizeBar ({
 	containerRef,
 	showing,
+	percentFromLeft,
+	setPercentFromLeft,
 	minLeftWidth,
 	minRightWidth
 }: ResizeBarProps) {
-	const [percentFromLeft, startDrag, handleKeyDown] = useClampedPositionManager({
+	const [startDrag, handleKeyDown] = useClampedPositionManager({
 			showing,
 			containerRef,
+			setPercentFromLeft,
 			minLeftWidth,
 			minRightWidth
 		}),
@@ -42,11 +45,11 @@ export default function ResizeBar ({
 function useClampedPositionManager ({
 	showing,
 	containerRef,
+	setPercentFromLeft,
 	minLeftWidth,
 	minRightWidth
-}: ResizeBarProps): [number, () => void, (event: React.KeyboardEvent) => void] {
-	const [percentFromLeft, setPercentFromLeft] = useState<number>(50),
-		[dragStarted, setDragStarted] = useState<boolean>(false),
+}: Omit<ResizeBarProps, "percentFromLeft">): [() => void, (event: React.KeyboardEvent) => void] {
+	const [dragStarted, setDragStarted] = useState<boolean>(false),
 		dragging = showing && dragStarted;
 
 	function clampPercentage (rawPercentage: number, containerWidth: number) {
@@ -124,7 +127,7 @@ function useClampedPositionManager ({
 		setPercentFromLeft
 	});
 
-	return [percentFromLeft, startDrag, handleKeyDown];
+	return [startDrag, handleKeyDown];
 }
 
 function useReclampPositionWhileShowing ({
@@ -244,6 +247,8 @@ function computeMousePercentage (event: MouseEvent, container: HTMLDivElement) {
 
 type ResizeBarProps = {
 	containerRef: React.RefObject<HTMLDivElement | null>,
+	percentFromLeft: number,
+	setPercentFromLeft: React.Dispatch<React.SetStateAction<number>>,
 	showing: boolean,
 	minLeftWidth: number,
 	minRightWidth: number

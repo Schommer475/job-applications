@@ -9,6 +9,7 @@ export default function Panes ({ref, left, right, narrowWidth, onNarrowChanged}:
 	const containerRef = useRef<HTMLDivElement>(null),
 		narrowRef = useRef<boolean>(false),
 		[expanded, setExpanded] = useState<ExpandedPanes>("both"),
+		[resizeBarPercentFromLeft, setResizeBarPercentFromLeft] = useState<number>(50),
 		classNames = ["panes"],
 		minLeftWidth = coercePositive(left.minWidth),
 		minRightWidth = coercePositive(right.minWidth),
@@ -79,6 +80,8 @@ export default function Panes ({ref, left, right, narrowWidth, onNarrowChanged}:
 			<ResizeBar
 				showing={!narrow && expanded === "both"}
 				containerRef={containerRef}
+				percentFromLeft={resizeBarPercentFromLeft}
+				setPercentFromLeft={setResizeBarPercentFromLeft}
 				minLeftWidth={minLeftWidth}
 				minRightWidth={minRightWidth}
 			/>
@@ -87,6 +90,7 @@ export default function Panes ({ref, left, right, narrowWidth, onNarrowChanged}:
 				label={left.label}
 				expanded={expanded === "both" || expanded === "left"}
 				content={left.content}
+				collapsedContentPercentage={resizeBarPercentFromLeft}
 				onExpansionToggle={() => handleExpansionToggle("left")}
 				onRefresh={left.onRefresh}
 			/>
@@ -95,6 +99,7 @@ export default function Panes ({ref, left, right, narrowWidth, onNarrowChanged}:
 				label={right.label}
 				expanded={expanded === "both" || expanded === "right"}
 				content={right.content}
+				collapsedContentPercentage={100 - resizeBarPercentFromLeft}
 				onExpansionToggle={() => handleExpansionToggle("right")}
 				onRefresh={right.onRefresh}
 			/>
