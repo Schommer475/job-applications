@@ -4,10 +4,12 @@ export default class TabsState<Tab extends BasicTab> {
 	#tabs: Tab[];
 	#tabIds: Set<string>;
 	#activationStack: string[];
+	#mergeTabUpdate: MergeTabUpdateFunction<Tab>;
 
 	static initialize<Tab extends BasicTab> ({
 		initialTabs,
-		initialActiveTabId
+		initialActiveTabId,
+		mergeTabUpdate
 	}: InitTabsStateProps<Tab>): TabsState<Tab> {
 		const tabs = [...(initialTabs ?? [])],
 			tabIds = new Set(tabs.map(({id}) => id)),
@@ -30,11 +32,12 @@ export default class TabsState<Tab extends BasicTab> {
 		return new TabsState(privateConstructorKey, {
 			tabs,
 			tabIds,
-			activationStack
+			activationStack,
+			mergeTabUpdate
 		});
 	}
 
-	constructor (key: symbol, {tabs, tabIds, activationStack}: TabsStateProps<Tab>) {
+	constructor (key: symbol, {tabs, tabIds, activationStack, mergeTabUpdate}: TabsStateProps<Tab>) {
 		if (key !== privateConstructorKey) {
 			throw new Error("Constructor is for internal use only. Use initialize or computeNext");
 		}
@@ -42,6 +45,7 @@ export default class TabsState<Tab extends BasicTab> {
 		this.#tabs = tabs;
 		this.#tabIds = tabIds;
 		this.#activationStack = activationStack;
+		this.#mergeTabUpdate = mergeTabUpdate;
 	}
 
 	get tabs () {
@@ -71,6 +75,9 @@ export default class TabsState<Tab extends BasicTab> {
 			case "add tab":
 				updatedState = this.#addTab(action);
 				break;
+			case "update tab":
+				updatedState = this.#updateTab(action);
+				break;
 			default:
 				actionType satisfies never;
 				throw new Error("Unknown update type: " + actionType);
@@ -93,7 +100,8 @@ export default class TabsState<Tab extends BasicTab> {
 				tabIds: this.#tabIds,
 				activationStack: this.#activationStack
 					.filter(whereNotExcludedId.bind(null, id))
-					.concat(id)
+					.concat(id),
+				mergeTabUpdate: this.#mergeTabUpdate
 			});
 		}
 
@@ -111,7 +119,8 @@ export default class TabsState<Tab extends BasicTab> {
 			tabIds: new Set([...this.#tabIds].filter(whereNotId)),
 			tabs: this.tabs.filter(({id: tabId}) => tabId !== id),
 			activationStack: this.#activationStack
-				.filter(whereNotId)
+				.filter(whereNotId),
+			mergeTabUpdate: this.#mergeTabUpdate
 		});
 	}
 
@@ -132,7 +141,29 @@ export default class TabsState<Tab extends BasicTab> {
 		return new TabsState(privateConstructorKey, {
 			tabIds: new Set([...this.#tabIds].concat(id)),
 			tabs: this.tabs.concat(tab),
-			activationStack
+			activationStack,
+			mergeTabUpdate: this.#mergeTabUpdate
+		});
+	}
+
+	#updateTab ({tab: {id, ...update}}: UpdateTabAction<Tab>): TabsState<Tab> {
+		if (!this.hasTab(id)) {
+			throw new Error("invalid tab updated: " + id);
+		}
+
+		return new TabsState(privateConstructorKey, {
+			tabIds: this.#tabIds,
+			tabs: this.tabs.map(tab => {
+				let storedTab = tab;
+
+				if (tab.id === id) {
+					storedTab = this.#mergeTabUpdate(tab, update);
+				}
+
+				return storedTab;
+			}),
+			activationStack: this.#activationStack,
+			mergeTabUpdate: this.#mergeTabUpdate
 		});
 	}
 }
@@ -143,12 +174,14 @@ function whereNotExcludedId (excludedId: string, id: string) {
 
 type InitTabsStateProps<Tab extends BasicTab> = {
 	initialTabs?: Tab[],
-	initialActiveTabId?: string
+	initialActiveTabId?: string,
+	mergeTabUpdate: MergeTabUpdateFunction<Tab>
 };
 
 export type TabAction<Tab extends BasicTab> = AddTabAction<Tab> |
 	ActivateTabAction |
-	RemoveTabAction;
+	RemoveTabAction |
+	UpdateTabAction<Tab>;
 
 type AddTabAction<Tab extends BasicTab> = {
 	type: "add tab",
@@ -166,10 +199,18 @@ type ActivateTabAction = {
 	id: string
 };
 
+type UpdateTabAction<Tab extends BasicTab> = {
+	type: "update tab",
+	tab: Partial<Tab> & BasicTab
+};
+
+type MergeTabUpdateFunction<Tab extends BasicTab> = (tab: Tab, update: Omit<Partial<Tab>, "id">) => Tab;
+
 type TabsStateProps<Tab extends BasicTab> = {
 	tabs: Tab[],
 	tabIds: Set<string>,
-	activationStack: string[]
+	activationStack: string[],
+	mergeTabUpdate: MergeTabUpdateFunction<Tab>
 };
 
 type BasicTab = {id: string};

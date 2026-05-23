@@ -2,10 +2,10 @@ import React, {useId, useImperativeHandle} from "react";
 import TabRibbon from "./TabRibbon.tsx";
 import TabPanels from "./TabPanels.tsx";
 import useTabsState from "./useTabsState.tsx";
-import type {InputTab, OnCloseProps} from "./useTabsState.tsx";
+import type {InputTab, PartialInputTab, OnCloseProps} from "./useTabsState.tsx";
 import "./Tabs.css";
 
-export type {InputTab, OnCloseProps};
+export type {InputTab, PartialInputTab, OnCloseProps};
 
 export default function Tabs ({
 	ref,
@@ -20,7 +20,8 @@ export default function Tabs ({
 			hasTab,
 			addTab,
 			activateTab,
-			removeTab
+			removeTab,
+			updateTab
 		} = useTabsState({tabsPrefix, initialTabs, initialActiveTabId}),
 		style = {
 			"--no-tabs-text": `"${emptyText}"`
@@ -31,8 +32,9 @@ export default function Tabs ({
 		addTab,
 		activateTab,
 		removeTab,
+		updateTab,
 		activeTabId
-	}), [hasTab, addTab, activateTab, removeTab, activeTabId]);
+	}), [hasTab, addTab, activateTab, removeTab, updateTab, activeTabId]);
 
 	return (
 		<div className="tabs"style={style}>
@@ -53,6 +55,7 @@ export interface TabsAPI {
 	addTab: (tab: InputTab, activate?: boolean) => void,
 	activateTab: (tabId: string) => void,
 	removeTab: (tabId: string) => void,
+	updateTab: (tab: PartialInputTab) => void,
 	readonly activeTabId: string | null
 };
 

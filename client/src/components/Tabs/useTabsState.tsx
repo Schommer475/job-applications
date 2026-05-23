@@ -10,7 +10,8 @@ export default function useTabsState ({
 }: UseTabsStateProps) {
 	const [state, dispatch] = useReducer(updateTabsState, TabsState.initialize({
 			initialTabs: initialTabs?.map(appendPartIds),
-			initialActiveTabId
+			initialActiveTabId,
+			mergeTabUpdate
 		})),
 		stateRef = useRef<TabsState<NonInteractiveTab>>(state),
 		// ref to prevent callbacks from being recreated every render
@@ -42,6 +43,13 @@ export default function useTabsState ({
 		enqueue({
 			type: "remove tab",
 			id
+		});
+	}
+
+	function updateTab (tab: PartialInputTab) {
+		enqueue({
+			type: "update tab",
+			tab
 		});
 	}
 
@@ -108,7 +116,9 @@ export default function useTabsState ({
 		}
 	}
 
-	function appendPartIds (tab: InputTab): NonInteractiveTab {
+	function appendPartIds<T extends {id: string}> (
+		tab: T
+	): T & {handleId: string, panelId: string} {
 		const id = tab.id;
 
 		return {
@@ -145,7 +155,8 @@ export default function useTabsState ({
 		hasTab,
 		addTab,
 		activateTab,
-		removeTab
+		removeTab,
+		updateTab
 	};
 }
 
@@ -164,6 +175,34 @@ function updateTabsState (state: TabsState<NonInteractiveTab>, action: TabAction
 	return state.computeNext(action);
 }
 
+function mergeTabUpdate (tab: NonInteractiveTab, update: Omit<Partial<NonInteractiveTab>, "id">): NonInteractiveTab {
+	return {
+		id: tab.id,
+		handleId: tab.handleId,
+		panelId: tab.panelId,
+		label: update.label ?? tab.label,
+		onActivated: mergeOptionalProperty(tab, update, "onActivated"),
+		closable: mergeOptionalProperty(tab, update, "closable"),
+		onClose: mergeOptionalProperty(tab, update, "onClose"),
+		onRefresh: mergeOptionalProperty(tab, update, "onRefresh"),
+		content: update.content ?? tab.content
+	};
+}
+
+function mergeOptionalProperty<K extends OptionalKeys<NonInteractiveTab>> (
+	tab: NonInteractiveTab,
+	update: Omit<Partial<NonInteractiveTab>, "id">,
+	key: K
+): NonInteractiveTab[K] {
+	let value = tab[key];
+
+	if (Object.hasOwn(update, key)) {
+		value = update[key] as NonInteractiveTab[K];
+	}
+
+	return value;
+}
+
 export type InputTab = {
 	id: string,
 	label: string,
@@ -177,6 +216,10 @@ export type InputTab = {
 	onClose?: (props: OnCloseProps) => unknown,
 	onRefresh?: NoArgsCallback,
 	content: React.ReactNode
+};
+
+export type PartialInputTab = Partial<InputTab> & {
+	id: string
 };
 
 export type OnCloseProps = {
@@ -207,3 +250,7 @@ type QueueEntry = {
 	action: TabAction,
 	stack?: string
 };
+
+type OptionalKeys<T> = {
+	[K in keyof T]-?: undefined extends T[K] ? K : never
+}[keyof T];
