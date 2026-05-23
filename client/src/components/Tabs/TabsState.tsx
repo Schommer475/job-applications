@@ -37,7 +37,12 @@ export default class TabsState<Tab extends BasicTab> {
 		});
 	}
 
-	constructor (key: symbol, {tabs, tabIds, activationStack, mergeTabUpdate}: TabsStateProps<Tab>) {
+	constructor (key: symbol, {
+		tabs,
+		tabIds,
+		activationStack,
+		mergeTabUpdate
+	}: TabsStateProps<Tab>) {
 		if (key !== privateConstructorKey) {
 			throw new Error("Constructor is for internal use only. Use initialize or computeNext");
 		}
