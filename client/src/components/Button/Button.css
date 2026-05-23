@@ -28,7 +28,6 @@
 .btn:hover {
   background: radial-gradient(ellipse at 50% 50%, var(--btn-center-hover) 55%, var(--btn-edge-hover) 100%);
   box-shadow: 0 3px 7px var(--btn-shadow-color), inset 0 1px 0 var(--btn-inset-color);
-  transform:  translateY(-1px);
 }
 
 /* plain — also documents what the .btn defaults mean */
