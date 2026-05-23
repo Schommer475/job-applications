@@ -1,0 +1,63 @@
+.btn {
+  /* Color variables — override these in variant classes */
+  --btn-center:       #ffffff;
+  --btn-edge:         #aabccc;
+  --btn-text:         #374151;
+  --btn-center-hover: var(--btn-center);   /* defaults: no shift on hover */
+  --btn-edge-hover:   var(--btn-edge);
+  --btn-shadow-color: rgba(0, 0, 0, 0.12);
+  --btn-inset-color:  rgba(255, 255, 255, 0.2);
+
+  /* Structure */
+  padding:       8px 18px;
+  border-radius: 7px;
+  font-size:     13px;
+  font-weight:   600;
+  white-space:   nowrap;
+  cursor:        pointer;
+  transition:    all 0.15s ease;
+
+  /* Visual — driven entirely by the variables above */
+  background:    radial-gradient(ellipse at 50% 50%, var(--btn-center) 55%, var(--btn-edge) 100%);
+  color:         var(--btn-text);
+  border:        1px solid var(--btn-edge);
+  border-bottom: 1px solid color-mix(in srgb, var(--btn-edge) 70%, black);
+  box-shadow:    0 1px 3px var(--btn-shadow-color), inset 0 1px 0 var(--btn-inset-color);
+}
+
+.btn:hover {
+  background: radial-gradient(ellipse at 50% 50%, var(--btn-center-hover) 55%, var(--btn-edge-hover) 100%);
+  box-shadow: 0 3px 7px var(--btn-shadow-color), inset 0 1px 0 var(--btn-inset-color);
+  transform:  translateY(-1px);
+}
+
+/* plain — also documents what the .btn defaults mean */
+.btn--plain {
+  --btn-center:       #ffffff;
+  --btn-edge:         #aabccc;
+  --btn-text:         #374151;
+  --btn-center-hover: #f4f8fb;
+  --btn-edge-hover:   #8fa8bc;
+  --btn-shadow-color: rgba(0, 0, 0, 0.12);
+  --btn-inset-color:  rgba(255, 255, 255, 0.95);
+}
+
+.btn--primary {
+  --btn-center:       #56c0f7;
+  --btn-edge:         #0f72a8;
+  --btn-text:         #ffffff;
+  --btn-center-hover: #62c8f9;
+  --btn-edge-hover:   #1a8fd4;
+  --btn-shadow-color: rgba(15, 114, 168, 0.25);
+  --btn-inset-color:  rgba(150, 220, 255, 0.3);
+}
+
+.btn--danger {
+  --btn-center:       #f87171;
+  --btn-edge:         #8b1010;
+  --btn-text:         #ffffff;
+  --btn-center-hover: #fa7e7e;
+  --btn-edge-hover:   #b01414;
+  --btn-shadow-color: rgba(139, 16, 16, 0.25);
+  --btn-inset-color:  rgba(255, 160, 160, 0.3);
+}
