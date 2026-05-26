@@ -60,8 +60,9 @@ export default function Panes ({ref, left, right, narrowWidth, onNarrowChanged}:
 
 				return endState;
 			});
-		}
-	}), []);
+		},
+		narrow
+	}), [narrow]);
 
 	function handleExpansionToggle (side: Side) {
 		let newExpansion: ExpandedPanes;
@@ -108,7 +109,8 @@ export default function Panes ({ref, left, right, narrowWidth, onNarrowChanged}:
 }
 
 export interface PanesAPI {
-	expand: (side: Side) => void
+	expand: (side: Side) => void,
+	readonly narrow: boolean
 }
 
 function coercePositive (value?: number) {
