@@ -23,6 +23,7 @@ export default function Tabs ({
 			removeTab,
 			updateTab
 		} = useTabsState({tabsPrefix, initialTabs, initialActiveTabId}),
+		tabCount = tabs.length,
 		style = {
 			"--no-tabs-text": `"${emptyText}"`
 		} as React.CSSProperties;
@@ -33,8 +34,9 @@ export default function Tabs ({
 		activateTab,
 		removeTab,
 		updateTab,
-		activeTabId
-	}), [hasTab, addTab, activateTab, removeTab, updateTab, activeTabId]);
+		activeTabId,
+		tabCount
+	}), [hasTab, addTab, activateTab, removeTab, updateTab, activeTabId, tabCount]);
 
 	return (
 		<div className="tabs"style={style}>
@@ -56,7 +58,8 @@ export interface TabsAPI {
 	activateTab: (tabId: string) => void,
 	removeTab: (tabId: string) => void,
 	updateTab: (tab: PartialInputTab) => void,
-	readonly activeTabId: string | null
+	readonly activeTabId: string | null,
+	readonly tabCount: number
 };
 
 type TabsProps = {
