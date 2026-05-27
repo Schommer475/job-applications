@@ -1,0 +1,145 @@
+.position-details {
+  padding: 12px 24px 0;
+  overflow: auto;
+  min-width: 295px;
+  max-width: 780px;
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+}
+
+.position-details > header {
+  margin-bottom: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 5px;
+}
+
+.position-details > header > h2 {
+  flex: 1 0 auto;
+  max-width: 100%;
+  color: #1a9de8;
+  margin: 0;
+}
+
+.position-details > header > .controls {
+  display: flex;
+  flex-shrink: 0;
+  max-width: 100%;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.position-details .responsive-row {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	column-gap: 10px;
+	row-gap: 5px;
+	margin-bottom: 5px;
+}
+
+.position-details h3 {
+	color: #1a9de8;
+}
+
+.position-details .responsive-row > span {
+	max-width: 100%;
+}
+
+.position-details .bubble {
+	border-radius: 10px;
+	font-weight: bold;
+	font-size: 14px;
+	padding: 1px 5px;
+	border-style: solid;
+	border-width: 1px;
+}
+
+.position-details .interviews {
+	flex: 1 1 260px;
+}
+
+.position-details .interviews ul {
+	list-style: none;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 5px
+}
+
+.position-details .interviews ul:empty::before {
+	content: "No Interviews Scheduled";
+	text-align: center;
+	display: block;
+}
+
+.position-details .interviews ul .interview {
+	border-left: 3px solid #3b82f6;
+	background-color: #f8fafc;
+	padding: 1px 5px;
+	border-radius: 2px;
+}
+
+.position-details .interviews ul .interview p {
+	margin-top: 1px;
+	margin-bottom: 0;
+	color: #64748b;
+	font-size: 11px;
+}
+
+.position-details .important-links {
+	flex: 0 0 200px;
+	min-width: 0;
+}
+
+.position-details .important-links ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	max-width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.position-details .important-links ul:empty::before {
+	content: "No Links";
+	text-align: center;
+	display: block;
+}
+
+.position-details .important-links ul li {
+	min-width: 0;
+}
+
+.position-details .important-links ul li a {
+	display: flex;
+	align-items: center;
+	padding: 5px 8px;
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	border-radius: 5px;
+	color: #3b82f6;
+	font-size: 12px;
+	text-decoration: none;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.position-details .important-links ul li a span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+    flex: 1 1 0;
+}
+
+.position-details .important-links ul li a::after {
+	content: " \2197";
+	flex-shrink: 0;
+}
