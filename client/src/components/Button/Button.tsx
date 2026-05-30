@@ -21,6 +21,6 @@ export default function Button ({variant = "plain", className, children, ...rest
 	);
 }
 
-type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+type ButtonProps = React.ComponentProps<"button"> & {
 	variant?: "plain" | "danger" | "primary" | (string & {})
 };

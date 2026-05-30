@@ -46,9 +46,9 @@ export default function Overlay ({
 	);
 }
 
-type OverlayProps = React.HTMLAttributes<HTMLDivElement> & {
+type OverlayProps = React.ComponentProps<"div"> & {
 	showing: boolean,
 	overlayContent: React.ReactNode,
-	contentProps?: Omit<React.HTMLAttributes<HTMLDivElement>, "children">,
+	contentProps?: Omit<React.ComponentProps<"div">, "children">,
 	children: React.ReactNode
 };
