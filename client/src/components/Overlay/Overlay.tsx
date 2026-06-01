@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useLayoutEffect, useRef} from "react";
 import "./Overlay.css";
 
 export default function Overlay ({
@@ -6,12 +6,16 @@ export default function Overlay ({
 	className,
 	overlayContent,
 	contentProps = {},
+	showFocusTargetRef,
 	children,
 	...overlayProps
 }: OverlayProps) {
-	const classNames = ["overlay"],
+	const overlayBoundaryRef = useRef<HTMLDivElement | null>(null),
+		classNames = ["overlay"],
 		contentClassNames = ["overlay-content"],
 		{className: contentClassName, ...remainingContentProps} = contentProps;
+
+	useFocusManagement(showing, overlayBoundaryRef, showFocusTargetRef);
 
 	if (className) {
 		classNames.push(className);
@@ -27,7 +31,7 @@ export default function Overlay ({
 			{...overlayProps}
 		>
 			{showing && (
-				<div className="overlay-boundary">
+				<div ref={overlayBoundaryRef} className="overlay-boundary">
 					<div
 						className={contentClassNames.join(" ")}
 						{...remainingContentProps}
@@ -46,9 +50,60 @@ export default function Overlay ({
 	);
 }
 
+function useFocusManagement (
+	showing: boolean,
+	overlayBoundaryRef: React.RefObject<HTMLDivElement | null>,
+	showFocusTargetRef?: React.RefObject<{focus (): void} | null>
+) {
+	useLayoutEffect(() => {
+		const initialFocusTarget = document.activeElement as HTMLElement | null,
+			showFocusTarget = showFocusTargetRef?.current,
+			overlayContent = overlayBoundaryRef.current;
+
+		let focusWithinOverlay = true,
+			cleanup;
+
+		if (showing && showFocusTarget) {
+			showFocusTarget.focus();
+			overlayContent?.addEventListener("focusout", handleFocusOut);
+			overlayContent?.addEventListener("focusin", handleFocusIn);
+		}
+
+		if (showFocusTargetRef) {
+			cleanup = () => {
+				if (showing && initialFocusTarget && focusWithinOverlay) {
+					initialFocusTarget.focus();
+				}
+
+				overlayContent?.removeEventListener("focusout", handleFocusOut);
+				overlayContent?.removeEventListener("focusin", handleFocusIn);
+			};
+		}
+
+		function handleFocusOut (event: FocusEvent) {
+			const showTerminated = event.relatedTarget === null;
+
+			if (
+				overlayContent &&
+				!showTerminated &&
+				!overlayContent.contains(event.relatedTarget as Node)
+			) {
+				focusWithinOverlay = false;
+			}
+		}
+
+		function handleFocusIn () {
+			focusWithinOverlay = true;
+		}
+
+		return cleanup;
+	}, [showing, overlayBoundaryRef, showFocusTargetRef]);
+}
+
 type OverlayProps = React.ComponentProps<"div"> & {
 	showing: boolean,
 	overlayContent: React.ReactNode,
 	contentProps?: Omit<React.ComponentProps<"div">, "children">,
+	showFocusTargetRef?: React.RefObject<{focus (): void} | null>,
 	children: React.ReactNode
 };

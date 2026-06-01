@@ -1,5 +1,5 @@
 import type {NoArgsCallback} from "../../types/callbacks";
-import {useId, useLayoutEffect, useRef} from "react";
+import {useId, useRef} from "react";
 import Overlay from "../Overlay";
 import Button from "../Button";
 import "./MessageOverlay.css";
@@ -18,12 +18,9 @@ export default function MessageOverlay ({
 }: MessageOverlayProps) {
 	const headerId = useId(),
 		acknowledgeButtonRef = useRef<HTMLButtonElement | null>(null),
-		overlayContentRef = useRef<HTMLDivElement | null>(null),
 		classNames = ["message-overlay"];
 
 	let effectiveHeaderId;
-
-	useFocusManagement(showing, overlayContentRef, acknowledgeButtonRef);
 
 	if (className) {
 		classNames.push(className);
@@ -38,7 +35,7 @@ export default function MessageOverlay ({
 			className={classNames.join(" ")}
 			showing={showing}
 			{...otherProps}
-			contentProps={{ref: overlayContentRef}}
+			showFocusTargetRef={acknowledgeButtonRef}
 			overlayContent={(
 				<dialog
 					open
@@ -63,47 +60,6 @@ export default function MessageOverlay ({
 			{children}
 		</Overlay>
 	);
-}
-
-function useFocusManagement(
-	showing: boolean,
-	overlayContentRef: React.RefObject<HTMLDivElement | null>,
-	showFocusTargetRef: React.RefObject<HTMLButtonElement | null>
-) {
-	useLayoutEffect(() => {
-		const initialFocusTarget = document.activeElement as HTMLElement | null,
-			showFocusTarget = showFocusTargetRef.current,
-			overlayContent = overlayContentRef.current;
-
-		let focusWithinOverlay = true;
-
-		if (showing && showFocusTarget) {
-			showFocusTarget.focus();
-			overlayContent?.addEventListener("focusout", handleFocusOut);
-			overlayContent?.addEventListener("focusin", handleFocusIn);
-		}
-
-		function handleFocusOut (event: FocusEvent) {
-			const showTerminated = event.relatedTarget === null;
-
-			if (overlayContent && !showTerminated && !overlayContent.contains(event.relatedTarget as Node)) {
-				focusWithinOverlay = false;
-			}
-		}
-
-		function handleFocusIn () {
-			focusWithinOverlay = true;
-		}
-
-		return () => {
-			if (showing && initialFocusTarget && focusWithinOverlay) {
-				initialFocusTarget.focus();
-			}
-
-			overlayContent?.removeEventListener("focusout", handleFocusOut);
-			overlayContent?.removeEventListener("focusin", handleFocusIn);
-		};
-	}, [showing, overlayContentRef, showFocusTargetRef]);
 }
 
 function normalizeMessage (message: React.ReactNode) {
