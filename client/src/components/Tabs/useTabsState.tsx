@@ -129,19 +129,42 @@ export default function useTabsState ({
 	}
 
 	function appendInteractionHandlers (stateTab: NonInteractiveTab): Tab {
-		const {id, closable, onClose, onActivated, ...remainingProps} = stateTab;
+		const {
+			id,
+			closeButtonState,
+			onClose,
+			refreshEnabled,
+			onRefresh,
+			onActivated,
+			...remainingProps
+		} = stateTab;
 
-		let handleClose;
+		let closeHandler,
+			refreshHandler;
 
-		if (closable || (closable === undefined && onClose)) {
-			handleClose = () => {
-				removeTab(id);
+		if (
+			["enabled", "disabled"].includes(closeButtonState ?? "") ||
+			(closeButtonState === undefined && onClose)
+		) {
+			closeHandler = {
+				enabled: closeButtonState !== "disabled",
+				callback: () => {
+					removeTab(id);
+				}
+			};
+		}
+
+		if (onRefresh) {
+			refreshHandler = {
+				enabled: refreshEnabled ?? true,
+				callback: onRefresh
 			};
 		}
 
 		return {
 			id,
-			onClose: handleClose,
+			closeHandler,
+			refreshHandler,
 			onSelected () {
 				activateTab(id);
 			},
@@ -182,8 +205,9 @@ function mergeTabUpdate (tab: NonInteractiveTab, update: Omit<Partial<NonInterac
 		panelId: tab.panelId,
 		label: update.label ?? tab.label,
 		onActivated: mergeOptionalProperty(tab, update, "onActivated"),
-		closable: mergeOptionalProperty(tab, update, "closable"),
+		closeButtonState: mergeOptionalProperty(tab, update, "closeButtonState"),
 		onClose: mergeOptionalProperty(tab, update, "onClose"),
+		refreshEnabled: mergeOptionalProperty(tab, update, "refreshEnabled"),
 		onRefresh: mergeOptionalProperty(tab, update, "onRefresh"),
 		content: update.content ?? tab.content
 	};
@@ -207,13 +231,14 @@ export type InputTab = {
 	id: string,
 	label: string,
 	onActivated?: NoArgsCallback,
-	closable?: boolean,
+	closeButtonState?: "enabled" | "disabled" | "gone",
 	/**
 	 * Called before onActivated fires for nextActiveTabId, if it fires.
 	 * If onActivated is scheduled to fire, calls to activateTab, addTab,
 	 * or removeTab will be queued until after it is fired
 	 **/
 	onClose?: (props: OnCloseProps) => unknown,
+	refreshEnabled?: boolean,
 	onRefresh?: NoArgsCallback,
 	content: React.ReactNode
 };
@@ -233,9 +258,16 @@ type NonInteractiveTab = InputTab & {
 	panelId: string
 };
 
-type Tab = Omit<NonInteractiveTab, "closable" | "onActivated" | "onClose"> & {
+type Tab = Omit<NonInteractiveTab, "closeButtonState" | "onActivated" | "onClose" | "refreshEnabled" | "onRefresh"> & {
 	onSelected: () => void,
-	onClose?: () => void
+	closeHandler?: {
+		enabled: boolean,
+		callback: () => void
+	},
+	refreshHandler?: {
+		enabled: boolean,
+		callback: NoArgsCallback
+	}
 };
 
 type TabAction = GenericTabAction<NonInteractiveTab>;

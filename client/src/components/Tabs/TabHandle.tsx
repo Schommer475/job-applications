@@ -8,8 +8,8 @@ export default function TabHandle ({
 	active,
 	focusable,
 	onSelected,
-	onRefresh,
-	onClose
+	refreshHandler,
+	closeHandler
 }: TabHandleProps) {
 	let tabIndex = -1;
 
@@ -20,7 +20,10 @@ export default function TabHandle ({
 	function handleKeyDown (event: React.KeyboardEvent) {
 		if (event.key === "Delete") {
 			event.preventDefault();
-			onClose?.();
+		}
+
+		if (event.key === "Delete" && closeHandler?.enabled) {
+			closeHandler.callback();
 		}
 	}
 
@@ -40,21 +43,24 @@ export default function TabHandle ({
 			>
 				{label}
 			</button>
-			<RefreshButton onClick={onRefresh} tabLabel={label} />
-			<CloseButton onClick={onClose} tabLabel={label} />
+			<RefreshButton handler={refreshHandler} tabLabel={label} />
+			<CloseButton handler={closeHandler} tabLabel={label} />
 		</>
 	);
 }
 
-function RefreshButton ({onClick, tabLabel}: NestedButtonProps) {
+function RefreshButton ({handler, tabLabel}: NestedButtonProps) {
+	const {enabled, callback} = handler ?? {};
+
 	let content = null;
 
-	if (onClick) {
+	if (handler) {
 		content = (
 			<button
 				className="refresh"
 				tabIndex={-1}
-				onClick={onClick}
+				disabled={!enabled}
+				onClick={callback}
 				aria-label={`refresh tab: ${tabLabel}`}
 			/>
 		);
@@ -63,15 +69,18 @@ function RefreshButton ({onClick, tabLabel}: NestedButtonProps) {
 	return content;
 }
 
-function CloseButton ({onClick, tabLabel}: NestedButtonProps) {
+function CloseButton ({handler, tabLabel}: NestedButtonProps) {
+	const {enabled, callback} = handler ?? {};
+
 	let content = null;
 
-	if (onClick) {
+	if (handler) {
 		content = (
 			<button
 				className="close"
 				tabIndex={-1}
-				onClick={onClick}
+				disabled={!enabled}
+				onClick={callback}
 				aria-label={`close tab: ${tabLabel}`}
 			/>
 		);
@@ -87,11 +96,20 @@ export type TabHandleProps = {
 	active: boolean,
 	focusable: boolean,
 	onSelected: NoArgsCallback,
-	onRefresh?: NoArgsCallback,
-	onClose?: NoArgsCallback
+	refreshHandler?: {
+		enabled: boolean,
+		callback: NoArgsCallback
+	},
+	closeHandler?: {
+		enabled: boolean,
+		callback: NoArgsCallback
+	}
 };
 
 type NestedButtonProps = {
-	onClick?: NoArgsCallback,
+	handler?: {
+		enabled: boolean,
+		callback: NoArgsCallback
+	},
 	tabLabel: string
 };

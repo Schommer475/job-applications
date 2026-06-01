@@ -116,9 +116,14 @@
 	content: "\00d7"
 }
 
-.tabs > .tab-ribbon > li > button.refresh:hover,
-.tabs > .tab-ribbon > li > button.close:hover {
+.tabs > .tab-ribbon > li > button.refresh:not(:disabled):hover,
+.tabs > .tab-ribbon > li > button.close:not(:disabled):hover {
 	background-color: #bfbfbf;
+}
+
+.tabs > .tab-ribbon > li > button.refresh:disabled,
+.tabs > .tab-ribbon > li > button.close:disabled {
+	color: #bfbfbf;
 }
 
 .tabs > .tab-panels {
