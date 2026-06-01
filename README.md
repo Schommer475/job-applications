@@ -114,6 +114,8 @@ job-applications/
 
 - [ ] List positions endpoint with filtering
 - [ ] Statuses endpoint
+- [ ] Add colors to statuses
+- [ ] move travelMinutes into a 'workArrangement' object, add 'type'
 - [ ] PATCH endpoint implementation
 - [ ] Frontend: connect to API, build out views
 - [ ] Caching on read endpoints
