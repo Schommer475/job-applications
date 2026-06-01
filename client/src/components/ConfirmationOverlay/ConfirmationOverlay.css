@@ -1,0 +1,43 @@
+.overlay.confirmation-overlay > .overlay-boundary {
+	container-type: size;
+}
+
+.overlay.confirmation-overlay > .overlay-boundary > .overlay-content {
+	width: 60%;
+	max-width: 450px;
+}
+
+.overlay.confirmation-overlay > .overlay-boundary > .overlay-content > dialog {
+	position: static;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	border-style: none;
+	box-sizing: border-box;
+	padding: 20px;
+	width: 100%;
+	min-height: 40cqh;
+	max-height: 80cqh;
+	overflow: hidden;
+}
+
+.overlay.confirmation-overlay > .overlay-boundary > .overlay-content > dialog > h2.title {
+	color: #1a9de8;
+	margin: 0;
+	flex-shrink: 0;
+}
+
+.overlay.confirmation-overlay > .overlay-boundary > .overlay-content > dialog > :not(h2.title):not(.controls) {
+	flex: 1;
+	overflow: auto;
+	min-height: 0;
+	margin: 0;
+}
+
+.overlay.confirmation-overlay > .overlay-boundary > .overlay-content > dialog > .controls {
+	align-self: flex-end;
+	flex-shrink: 0;
+	display: flex;
+	flex-direction: row;
+	gap: 4px;
+}
