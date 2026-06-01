@@ -22,6 +22,7 @@ export default function usePositionDetailTabManager () {
 			return {
 				status: "loading",
 				errorMessage: null,
+				errorSource: null,
 				position: null,
 				label: initialLabel,
 				closeButtonState: "enabled",
@@ -43,6 +44,7 @@ export default function usePositionDetailTabManager () {
 				Object.assign(detailModel, {
 					status: "loading",
 					errorMessage: null,
+					errorSource: null,
 					refreshEnabled: false
 				});
 
@@ -58,6 +60,7 @@ export default function usePositionDetailTabManager () {
 				Object.assign(detailModel, {
 					status: "removing",
 					errorMessage: null,
+					errorSource: null,
 					closeButtonState: "disabled",
 					refreshEnabled: false
 				});
@@ -71,7 +74,8 @@ export default function usePositionDetailTabManager () {
 			if (detailModel.status === "error") {
 				Object.assign(detailModel, {
 					status: "loaded",
-					errorMessage: null
+					errorMessage: null,
+					errorSource: null
 				});
 
 				onModelUpdated(detailModel);
@@ -89,6 +93,7 @@ export default function usePositionDetailTabManager () {
 				Object.assign(detailModel, {
 					status: "loaded",
 					errorMessage: null,
+					errorSource: null,
 					position,
 					label: `${position.company}: ${position.title}`,
 					closeButtonState: "enabled",
@@ -98,7 +103,7 @@ export default function usePositionDetailTabManager () {
 				onModelUpdated(detailModel);
 			} catch (error) {
 				if (!(error instanceof Error) || error.name !== "AbortError") {
-					handleError(error);
+					handleError("load", error);
 				}
 			}
 		}
@@ -109,20 +114,22 @@ export default function usePositionDetailTabManager () {
 
 				Object.assign(detailModel, {
 					status: "removed",
-					errorMessage: null
+					errorMessage: null,
+					errorSource: null
 				});
 
 				onModelUpdated(detailModel);
 			} catch (error) {
 				if (!(error instanceof Error) || error.name !== "AbortError") {
-					handleError(error);
+					handleError("remove", error);
 				}
 			}
 		}
 
-		function handleError (error: unknown) {
+		function handleError (source: "load" | "remove", error: unknown) {
 			Object.assign(detailModel, {
 				status: "error",
+				errorSource: source,
 				errorMessage: getErrorMessage(error),
 				closeButtonState: "enabled",
 				refreshEnabled: true
@@ -168,10 +175,12 @@ export type DetailTabModel = {
 } & (
 	{
 		status: "loading" | "removing" | "loaded" | "removed",
-		errorMessage: null
+		errorMessage: null,
+		errorSource: null
 	} | {
 		status: "error",
-		errorMessage: string
+		errorMessage: string,
+		errorSource: "load" | "remove"
 	}
 );
 
