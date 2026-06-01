@@ -1,5 +1,6 @@
 import React, {useLayoutEffect, useRef} from "react";
 import "./Overlay.css";
+import type {NoArgsCallback} from "../../types/callbacks";
 
 export default function Overlay ({
 	showing,
@@ -7,6 +8,7 @@ export default function Overlay ({
 	overlayContent,
 	contentProps = {},
 	showFocusTargetRef,
+	onEscape,
 	children,
 	...overlayProps
 }: OverlayProps) {
@@ -25,13 +27,23 @@ export default function Overlay ({
 		contentClassNames.push(contentClassName);
 	}
 
+	function handleKeyDown (event: React.KeyboardEvent) {
+		if (event.key === "Escape") {
+			onEscape?.();
+		}
+	}
+
 	return (
 		<div
 			className={classNames.join(" ")}
 			{...overlayProps}
 		>
 			{showing && (
-				<div ref={overlayBoundaryRef} className="overlay-boundary">
+				<div
+					ref={overlayBoundaryRef}
+					className="overlay-boundary"
+					onKeyDown={handleKeyDown}
+				>
 					<div
 						className={contentClassNames.join(" ")}
 						{...remainingContentProps}
@@ -105,5 +117,6 @@ type OverlayProps = React.ComponentProps<"div"> & {
 	overlayContent: React.ReactNode,
 	contentProps?: Omit<React.ComponentProps<"div">, "children">,
 	showFocusTargetRef?: React.RefObject<{focus (): void} | null>,
+	onEscape?: NoArgsCallback,
 	children: React.ReactNode
 };

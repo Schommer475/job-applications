@@ -36,6 +36,7 @@ export default function MessageOverlay ({
 			showing={showing}
 			{...otherProps}
 			showFocusTargetRef={acknowledgeButtonRef}
+			onEscape={onAcknowledge}
 			overlayContent={(
 				<dialog
 					open
