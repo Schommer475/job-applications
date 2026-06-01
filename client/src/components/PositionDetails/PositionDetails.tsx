@@ -1,46 +1,86 @@
-import {useState, useImperativeHandle, useEffect} from "react";
+import type {Position} from "../../api/positions.ts";
+import type {NoArgsCallback} from "../../types/callbacks.tsx";
 import Button from "../Button";
+import PendingOverlay from "../PendingOverlay";
+import MessageOverlay from "../MessageOverlay";
+import ConfirmationOverlay from "../ConfirmationOverlay";
+import {useState} from "react";
 import "./PositionDetails.css";
 
-export default function PositionDetails ({ref, id, onLabelChanged}: PositionDetailsProps) {
-	const [cacheKey, setCacheKey] = useState<number>(1);
+// TODO wire up edit button
 
-	useImperativeHandle(ref, () => ({
-		reload: () => {
-			setCacheKey(prior => prior + 1);
-		}
-	}), []);
+export default function PositionDetails ({
+	status,
+	errorMessage,
+	position,
+	label,
+	onRemove,
+	clearError
+}: PositionDetailsProps) {
+	const [confirmingRemoval, setConfirmingRemoval] = useConfirmingRemoval(status);
+
+	let pendingMessage = "Loading, please wait";
+
+	if (status === "removing") {
+		pendingMessage = "Removal pending, please wait";
+	}
 
 	return (
-		<PositionDetailsCore
-			key={cacheKey}
-			id={id}
-			onLabelChanged={onLabelChanged}
-		/>
+		<div className="position-details">
+			<PendingOverlay
+				showing={status === "loading" || status === "removing"}
+				message={pendingMessage}
+			>
+				<MessageOverlay
+					showing={status === "error"}
+					title="Error"
+					message={errorMessage ?? ""}
+					onAcknowledge={clearError}
+				>
+					<ConfirmationOverlay
+						showing={confirmingRemoval}
+						title="Confirm Removal"
+						message={(
+							<p>
+								<strong className="confirm-removal-question">
+									Are you sure you wish to remove <i>{label}</i>?
+								</strong>
+								This cannot be undone.
+							</p>
+						)}
+						yesButtonVariant="danger"
+						onYes={onRemove}
+						onNo={() => setConfirmingRemoval(false)}
+					>
+						{position && (
+							<PositionDetailsData
+								position={position}
+								label={label}
+								onRemove={() => setConfirmingRemoval(true)}
+							/>
+						)}
+					</ConfirmationOverlay>
+				</MessageOverlay>
+			</PendingOverlay>
+		</div>
 	);
 }
 
-function PositionDetailsCore ({id, onLabelChanged}: Omit<PositionDetailsProps, "ref">) {
-	const position = usePosition(id),
-		positionLabel = `${position.company}: ${position.title}`,
-		bubbleStyle = {
-			"background-color": position.status.color.background,
-			"color": position.status.color.text,
-			"border-color": position.status.color.border
-		};
-
-	useEffect(() => {
-		onLabelChanged(positionLabel);
-	}, [positionLabel, onLabelChanged]);
+function PositionDetailsData ({position, label, onRemove}: PositionDetailsDataProps) {
+	const bubbleStyle = {
+		backgroundColor: position.status.color.background,
+		color: position.status.color.text,
+		borderColor: position.status.color.border
+	};
 
 	return (
-		<article className="position-details">
+		<article className="position-details-data">
 			<header>
-				<h2 className="header">{positionLabel}</h2>
+				<h2 className="header">{label}</h2>
 				<div className="controls">
 					<Button
 						className="edit"
-						onClick={() => console.log("open edit " + id)}
+						onClick={() => console.log("open edit " + position.id)}
 						aria-label="edit position"
 					>
 						Edit
@@ -48,7 +88,7 @@ function PositionDetailsCore ({id, onLabelChanged}: Omit<PositionDetailsProps, "
 					<Button
 						variant="danger"
 						className="remove"
-						onClick={() => console.log("remove " + id)}
+						onClick={onRemove}
 						aria-label="remove position"
 					>
 						Remove
@@ -58,22 +98,23 @@ function PositionDetailsCore ({id, onLabelChanged}: Omit<PositionDetailsProps, "
 			<section>
 				<div className="responsive-row">
 					<span className="bubble" style={bubbleStyle}>{position.status.name}</span>
-					<span>
-						<strong>Date Applied: </strong>
-						<span>{new Date(position.dateApplied).toLocaleDateString("en-US")}</span>
-					</span>
+					{position.dateApplied != null && (
+						<span>
+							<strong>Date Applied: </strong>
+							<span>{new Date(position.dateApplied).toLocaleDateString("en-US")}</span>
+						</span>
+					)}
 				</div>
-				<div className="work-arrangement">
-					<h3>Work Arrangement</h3>
-					<div>
-						<strong>Type: </strong>
+				<div className="work-arrangement responsive-row">
+					<span>
+						<strong>Work Type: </strong>
 						<span>{position.workArrangement.type}</span>
-					</div>
-					{position.workArrangement.travelMinutes !== null && (
-						<div>
+					</span>
+					{position.workArrangement.travelMinutes != null && (
+						<span>
 							<strong>Travel Minutes: </strong>
 							<span>{position.workArrangement.travelMinutes}</span>
-						</div>
+						</span>
 					)}
 				</div>
 				{position.notes != null && (
@@ -105,7 +146,7 @@ function PositionDetailsCore ({id, onLabelChanged}: Omit<PositionDetailsProps, "
 	);
 }
 
-function Interview ({label, scheduled, duration, location, meetingLink}) {
+function Interview ({label, scheduled, duration, location, meetingLink}: Position["interviews"][number]) {
 	const scheduledDate = new Date(scheduled),
 		durationParts = [];
 
@@ -156,70 +197,39 @@ function Interview ({label, scheduled, duration, location, meetingLink}) {
 	);
 }
 
-// placeholder
-function usePosition (id: number) {
-	return {
-		id,
-		company: "Principal",
-		title: "Software Engineer II",
-		status: {
-			id: 3,
-			name: "Interviewing",
-			color: {
-				text: "#000000",
-				background: "#ffd400",
-				border: "#ffd400"
-			}
-		},
-		dateApplied: "2026-05-26T15:30:00.000Z",
-		workArrangement: {
-			type: "Hybrid",
-			travelMinutes: 18
-		},
-		notes: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed massa neque, pharetra ac dignissim a, hendrerit vitae mauris. Duis facilisis risus ut quam dictum pharetra. Vivamus lacinia fermentum sem vel rhoncus. Mauris ullamcorper lobortis tellus eget luctus. Donec fermentum ligula et ante accumsan auctor. Vivamus a elit et mi suscipit egestas. Maecenas auctor augue viverra facilisis eleifend. Ut sit amet nisi efficitur, efficitur magna ut, varius dolor. Maecenas et nibh in nibh mattis finibus. Nam dapibus libero quis euismod ornare. Aenean eget congue nunc.",
-		importantLinks: [{
-			label: "Job Posting",
-			url: "https://testlink.com"
-		}, {
-			label: "Really Really really Really Really really Really Really really Really Really really long label",
-			url: "https://testlink.com"
-		}],
-		interviews: [{
-			label: "Video Screening",
-			scheduled: "2026-05-26T15:30:00.000Z",
-			location: "4604 EP True Parkway Unit #4203, West Des Moines",
-			meetingLink: "foo_bar"
-		}, {
-			label: "Video Screening",
-			scheduled: "2026-05-26T15:30:00.000Z",
-			duration: {
-				hours: 1,
-				minutes: 30
-			},
-			location: "4604 EP True Parkway Unit #4203, West Des Moines"
-		}, {
-			label: "Video Screening",
-			scheduled: "2026-05-26T15:30:00.000Z",
-			duration: {
-				hours: 1
-			},
-			meetingLink: "foo_bar"
-		}, {
-			label: "Video Screening",
-			scheduled: "2026-05-26T15:30:00.000Z",
-			duration: {
-				minutes: 30
-			}
-		}]
-	};
+function useConfirmingRemoval (
+	status: PositionDetailsProps["status"]
+): [boolean, React.Dispatch<React.SetStateAction<boolean>>] {
+	const [previousStatus, setPreviousStatus] = useState<typeof status>(status),
+		[confirmingRemoval, setConfirmingRemoval] = useState<boolean>(false);
+
+	// setState during render resets confirmingRemoval synchronously when status changes,
+	// avoiding a visible flash that useEffect (post-paint) would cause
+	if (previousStatus !== status) {
+		setPreviousStatus(status);
+		setConfirmingRemoval(false);
+	}
+
+	return [confirmingRemoval, setConfirmingRemoval];
 }
 
-export type PositionDetailsAPI = {
-	reload: () => void
-};
+export type PositionDetailsProps = {
+	position: Position | null,
+	label: string,
+	onRemove: NoArgsCallback,
+	clearError: NoArgsCallback
+} & (
+	{
+		status: "loading" | "removing" | "loaded",
+		errorMessage: null
+	} | {
+		status: "error",
+		errorMessage: string
+	}
+);
 
-type PositionDetailsProps = {
-	ref?: React.RefObject<PositionDetailsAPI | null>,
-	id: number,
-	onLabelChanged: (newLabel: string) => unknown
+type PositionDetailsDataProps = {
+	position: Position,
+	label: string,
+	onRemove: NoArgsCallback
 };
