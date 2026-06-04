@@ -15,7 +15,7 @@ export const fieldSchema: Record<FieldSpecifier["path"], FieldRule> = {
 		label: "Status"
 	},
 	"dateApplied": {
-		format: "date",
+		validationRules: ["date"],
 		serializeAs: "date",
 		label: "Date applied"
 	},
@@ -24,7 +24,11 @@ export const fieldSchema: Record<FieldSpecifier["path"], FieldRule> = {
 		label: "Work arrangement"
 	},
 	"workArrangement:travelMinutes": {
-		format: "non-negative-integer",
+		validationRules: [
+			"integer",
+			"min-value=0"
+		],
+		validationDescription: "must be a non-negative whole number",
 		serializeAs: "number",
 		label: "Travel minutes"
 	},
@@ -37,7 +41,7 @@ export const fieldSchema: Record<FieldSpecifier["path"], FieldRule> = {
 	},
 	"importantLinks.url": {
 		required: true,
-		format: "url",
+		validationRules: ["url"],
 		label: "Link URL"
 	},
 	"interviews.label": {
@@ -46,22 +50,31 @@ export const fieldSchema: Record<FieldSpecifier["path"], FieldRule> = {
 	},
 	"interviews.scheduled:date": {
 		required: true,
-		format: "date",
+		validationRules: ["date"],
 		serializeAs: "date",
 		label: "Interview date"
 	},
 	"interviews.scheduled:time": {
 		required: true,
-		format: "time",
+		validationRules: ["time"],
 		label: "Interview time"
 	},
 	"interviews.duration:hours": {
-		format: "non-negative-integer",
+		validationRules: [
+			"integer",
+			"min-value=0"
+		],
+		validationDescription: "must be a non-negative whole number",
 		serializeAs: "number",
 		label: "Duration hours"
 	},
 	"interviews.duration:minutes": {
-		format: "non-negative-integer",
+		validationRules: [
+			"integer",
+			"min-value=0",
+			"max-value=59"
+		],
+		validationDescription: "must be a whole number from 0 to 59",
 		serializeAs: "number",
 		label: "Duration minutes"
 	},
@@ -69,14 +82,22 @@ export const fieldSchema: Record<FieldSpecifier["path"], FieldRule> = {
 		label: "Location"
 	},
 	"interviews.meetingLink": {
-		format: "url",
+		validationRules: ["url"],
 		label: "Meeting link"
 	}
 };
 
 export type FieldRule = {
 	required?: true,
-	format?: "date" | "time" | "non-negative-integer" | "url",
+	validationRules?: ValidationRule[],
+	validationDescription?: string,
 	serializeAs?: "string" | "number" | "date",
 	label: string
 };
+
+export type ValidationRule = "date" |
+	"time" |
+	"url" |
+	"integer" |
+	`min-value=${number}` |
+	`max-value=${number}`;

@@ -2,8 +2,9 @@ import type {FormData, FieldSpecifier, Input} from "./useFormData.tsx";
 import type {SubmittedPosition} from "../../api/positions.ts";
 import type {FieldRule} from "./fieldSchema.ts";
 import {fieldSchema} from "./fieldSchema.ts";
+import validateRule from "./validateRule.ts";
 
-const timePattern = /^\s*((?:0?[1-9])|(?:1[0-2]))\s*:\s*([0-5]\d)\s*([aApP])\s*[mM]?\s*$/;
+export const timePattern = /^\s*((?:0?[1-9])|(?:1[0-2]))\s*:\s*([0-5]\d)\s*([aApP])\s*[mM]?\s*$/;
 
 export function validateFormData (formData: FormData): ValidationError[] {
 	const errors: ValidationError[] = [];
@@ -17,7 +18,7 @@ export function validateFormData (formData: FormData): ValidationError[] {
 		if (rule.required && !value) {
 			message = "is required";
 		} else if (value) {
-			message = validateFormat(value, rule.format);
+			message = validateRule(value, rule);
 		}
 
 		if (message) {
@@ -124,30 +125,6 @@ function* getSubmittableFields (
 	}
 }
 
-function validateFormat (value: string, format: FieldRule["format"]): string | null {
-	let error: string | null = null;
-
-	if (format === "non-negative-integer" && !isNonNegativeInteger(value)) {
-		error = "must be a non-negative whole number";
-	} else if (format === "date" && Number.isNaN(new Date(value).getTime())) {
-		error = "must be a valid date";
-	} else if (format === "time" && !timePattern.test(value)) {
-		error = "must be a valid time";
-	} else if (format === "url") {
-		try {
-			const url = new URL(value);
-
-			if (url.protocol !== "http:" && url.protocol !== "https:") {
-				error = "must be a valid URL starting with http:// or https://";
-			}
-		} catch {
-			error = "must be a valid URL starting with http:// or https://";
-		}
-	}
-
-	return error;
-}
-
 function serializeField (value: string, rule: FieldRule): string | number | Date | undefined {
 	value = value.trim();
 
@@ -189,12 +166,6 @@ function interviewHasContent ({
 		location.value.trim() ||
 		meetingLink.value.trim()
 	);
-}
-
-function isNonNegativeInteger (value: string) {
-	const numericValue = Number(value);
-
-	return Number.isInteger(numericValue) && numericValue >= 0;
 }
 
 function normalizeTimeString (value: string) {
