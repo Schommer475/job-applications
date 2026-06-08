@@ -1,5 +1,5 @@
 import type {FieldRule} from "./fieldSchema.ts";
-import {timePattern} from "./utils.ts";
+import {isValidDate, isValidTime} from "../../util/dateTime.ts";
 
 export default function validateRule (
 	value: string,
@@ -23,10 +23,10 @@ export default function validateRule (
 		) {
 			error = validationDescription || "must be at most " + property;
 			break;
-		} else if (validationRule === "date" && !validateDate(value)) {
+		} else if (validationRule === "date" && !isValidDate(value)) {
 			error = validationDescription || "must be a valid date";
 			break;
-		} else if (validationRule === "time" && !validateTime(value)) {
+		} else if (validationRule === "time" && !isValidTime(value)) {
 			error = validationDescription || "must be a valid time";
 			break;
 		} else if (validationRule === "url" && !validateUrl(value)) {
@@ -60,14 +60,6 @@ function validateMax (value: string | number, target: string | number) {
 	const parsed = Number(value);
 
 	return validateNumber(parsed) && parsed <= Number(target);
-}
-
-function validateDate (value: string) {
-	return !Number.isNaN(new Date(value).getTime());
-}
-
-function validateTime (value: string) {
-	return timePattern.test(value);
 }
 
 function validateUrl (value: string) {

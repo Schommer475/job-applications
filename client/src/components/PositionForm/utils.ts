@@ -3,8 +3,7 @@ import type {SubmittedPosition} from "../../api/positions.ts";
 import type {FieldRule} from "./fieldSchema.ts";
 import {fieldSchema} from "./fieldSchema.ts";
 import validateRule from "./validateRule.ts";
-
-export const timePattern = /^\s*((?:0?[1-9])|(?:1[0-2]))\s*:\s*([0-5]\d)\s*([aApP])\s*[mM]?\s*$/;
+import * as dateUtil from "../../util/dateTime.ts";
 
 export function validateFormData (formData: FormData): ValidationError[] {
 	const errors: ValidationError[] = [];
@@ -169,27 +168,24 @@ function interviewHasContent ({
 }
 
 function normalizeTimeString (value: string) {
-	const match = value.match(timePattern);
+	const normalized = dateUtil.normalizeTimeString(value);
 
-	if (!match) {
+	if (!normalized) {
 		throw new Error(`normalizeTimeString called with invalid time ${value}. ` +
 			"Validate data before serializing!"
 		);
 	}
 
-	const [, hour, minute, meridiemChar] = match;
-
-	return `${hour}:${minute} ${meridiemChar.toLowerCase()}m`;
+	return normalized;
 }
 
 function serializeDate (value: string) {
-	let serialized = new Date(value);
+	const serialized = dateUtil.normalizeDate(value);
 
-	// this specific format parses to utc midnight, coerce back to local
-	if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-		const [year, month, day] = value.split("-").map(Number);
-
-		serialized = new Date(year, month - 1, day);
+	if (!serialized) {
+		throw new Error(`serializeDate called with invalid date ${value}. ` +
+			"Validate data before serializing!"
+		);
 	}
 
 	return serialized;
