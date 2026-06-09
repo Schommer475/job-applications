@@ -1,0 +1,6 @@
+.field-wrapper textarea.field-input {
+	height: auto;
+	resize: vertical;
+	min-height: 80px;
+	padding: 8px 9px;
+}
