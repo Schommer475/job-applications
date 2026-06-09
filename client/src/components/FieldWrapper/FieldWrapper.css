@@ -1,0 +1,71 @@
+.field-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.field-wrapper > .field-label {
+	font-size: 12px;
+	font-weight: 600;
+	color: #374151;
+}
+
+.field-wrapper > .field-label > .required-mark {
+	display: none;
+}
+
+.field-wrapper.required > .field-label > .required-mark {
+	color: #ef4444;
+	display: inline;
+}
+
+.field-wrapper .field-input {
+	box-sizing: border-box;
+	border: 1px solid #c5d6e4;
+	border-bottom: 1px solid #a8bed1;
+	border-radius: 3px;
+	height: 30px;
+	padding: 0 9px;
+	font-size: 13px;
+	background-color: #ffffff;
+}
+
+.field-wrapper .field-input:focus {
+	border-color: #3a9cd4;
+	border-bottom-color: #2b8dc4;
+	box-shadow: 0 0 0 3px rgba(58, 156, 212, 0.15);
+}
+
+.field-wrapper.error .field-input:not(:focus) {
+	border-color: #ef4444;
+	border-bottom-color: #c23232;
+	box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+.field-wrapper > .error-message {
+	display: none;
+}
+
+.field-wrapper.error > .error-message {
+	font-size: 11.5px;
+	color: #ef4444;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.field-wrapper > .error-message > svg.error-icon {
+	width: 12px;
+	height:12px;
+	fill: none;
+}
+
+.field-wrapper > .error-message > svg.error-icon > circle {
+	stroke: #ef4444;
+}
+
+.field-wrapper > .error-message > svg.error-icon > path {
+	stroke: #ef4444;
+	stroke-width: 1.2;
+	stroke-linecap: round;
+}
