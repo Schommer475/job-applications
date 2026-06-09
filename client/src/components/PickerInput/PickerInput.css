@@ -1,0 +1,51 @@
+.field-wrapper .picker-input-wrapper {
+	position: relative;
+}
+
+.field-wrapper input.field-input.picker-input {
+	padding-right: 32px;
+	width: 100%;
+}
+
+.field-wrapper  .picker-input-wrapper button.toggle-picker {
+	position: absolute;
+	right: 1px;
+	top: 1px;
+	bottom: 1px;
+	width: 28px;
+	border-top: none;
+	border-bottom: none;
+	border-right: none;
+	border-left: 1px solid #dde6ef;
+	background: none;
+	color: #7a9eb8;
+	border-radius: 0 2px 2px 0;
+}
+
+.field-wrapper  .picker-input-wrapper button.toggle-picker:hover {
+	background: #f0f7fc;
+	color: #3a9cd4;
+}
+
+.field-wrapper  .picker-input-wrapper .picker-popover {
+	position: fixed;
+	inset: auto;
+	margin: 0;
+	/* position-anchor set inline per instance */
+	top: anchor(bottom);
+	right: anchor(right);
+	position-try-fallbacks: flip-block, --picker-flip-h, --picker-flip-both;
+}
+
+@position-try --picker-flip-h {
+  top: anchor(bottom);
+  right: auto; 
+  left: anchor(left);
+}
+
+@position-try --picker-flip-both {
+  top: auto;
+  right: auto; 
+  bottom: anchor(top);
+  left: anchor(left);
+}
