@@ -20,11 +20,17 @@
 	background: none;
 	color: #7a9eb8;
 	border-radius: 0 2px 2px 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: "background" .1s, "color" .1s;
+	padding: 0;
 }
 
 .field-wrapper  .picker-input-wrapper button.toggle-picker:hover {
 	background: #f0f7fc;
 	color: #3a9cd4;
+	transition: "background" .1s, "color" .1s;
 }
 
 .field-wrapper  .picker-input-wrapper .picker-popover {
@@ -35,6 +41,11 @@
 	top: anchor(bottom);
 	right: anchor(right);
 	position-try-fallbacks: flip-block, --picker-flip-h, --picker-flip-both;
+	background: white;
+	border: 1px solid #c5d6e4;
+	border-radius: 5px;
+	box-shadow: 0 6px 20px rgba(0,0,0,.13);
+	padding: 0;
 }
 
 @position-try --picker-flip-h {
