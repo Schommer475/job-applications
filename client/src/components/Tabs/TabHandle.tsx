@@ -1,5 +1,5 @@
 import type {NoArgsCallback} from "../../types/callbacks.tsx";
-import React from "react";
+import type React from "react";
 
 export default function TabHandle ({
 	handleId,

@@ -1,4 +1,5 @@
-import React, {useEffect, useRef} from "react";
+import {useEffect, useRef} from "react";
+import type React from "react";
 
 export default function TabPanels ({activeTabId, tabs}: TabPanelsProps) {
 	const panelsRef = useRef<HTMLDivElement | null>(null);

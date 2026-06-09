@@ -1,4 +1,5 @@
-import React, {useId, useImperativeHandle} from "react";
+import {useId, useImperativeHandle} from "react";
+import type React from "react";
 import TabRibbon from "./TabRibbon.tsx";
 import TabPanels from "./TabPanels.tsx";
 import useTabsState from "./useTabsState.tsx";

@@ -1,6 +1,7 @@
 import useUserId from "../components/UserContext/useUserId.tsx";
 import * as positions from "../api/positions.ts";
-import React, {useRef, useEffect} from "react";
+import {useRef, useEffect} from "react";
+import type React from "react";
 
 export default function usePositionsApi () {
 	const userId = useUserId(),

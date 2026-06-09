@@ -1,6 +1,7 @@
 import TabHandle from "./TabHandle.tsx";
 import type {TabHandleProps} from "./TabHandle.tsx";
-import React, {useState, useEffect, useRef} from "react";
+import {useState, useEffect, useRef} from "react";
+import type React from "react";
 
 export default function TabRibbon ({activeTabId, tabs}: TabRibbonProps) {
 	const ribbonRef = useRef<HTMLUListElement | null>(null),

@@ -1,5 +1,6 @@
 import * as statusesApi from "../api/statuses.ts";
-import React, {useRef, useEffect} from "react";
+import {useRef, useEffect} from "react";
+import type React from "react";
 
 export default function useStatusesApi () {
 	const inflightRequestAbortersRef = useRef<AbortController[]>([]);

@@ -1,4 +1,5 @@
-import React, {useState, useEffect, useEffectEvent} from "react";
+import {useState, useEffect, useEffectEvent} from "react";
+import type React from "react";
 
 export const resizeBarWidth = 1;
 
