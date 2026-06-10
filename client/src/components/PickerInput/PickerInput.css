@@ -7,7 +7,7 @@
 	width: 100%;
 }
 
-.field-wrapper  .picker-input-wrapper button.toggle-picker {
+.field-wrapper .picker-input-wrapper button.toggle-picker {
 	position: absolute;
 	right: 1px;
 	top: 1px;
@@ -27,13 +27,13 @@
 	padding: 0;
 }
 
-.field-wrapper  .picker-input-wrapper button.toggle-picker:hover {
+.field-wrapper .picker-input-wrapper button.toggle-picker:hover {
 	background: #f0f7fc;
 	color: #3a9cd4;
 	transition: "background" .1s, "color" .1s;
 }
 
-.field-wrapper  .picker-input-wrapper .picker-popover {
+.field-wrapper .picker-input-wrapper .picker-popover {
 	position: fixed;
 	inset: auto;
 	margin: 0;
@@ -49,14 +49,14 @@
 }
 
 @position-try --picker-flip-h {
-  top: anchor(bottom);
-  right: auto; 
-  left: anchor(left);
+	top: anchor(bottom);
+	right: auto;
+	left: anchor(left);
 }
 
 @position-try --picker-flip-both {
-  top: auto;
-  right: auto; 
-  bottom: anchor(top);
-  left: anchor(left);
+	top: auto;
+	right: auto;
+	bottom: anchor(top);
+	left: anchor(left);
 }

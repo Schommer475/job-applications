@@ -1,76 +1,76 @@
 .btn {
-  /* Gradient colours — override in variant classes */
-  --btn-top:          #ffffff;
-  --btn-bottom:       #e2edf5;
-  --btn-top-hover:    var(--btn-top);
-  --btn-bottom-hover: color-mix(in srgb, var(--btn-bottom) 80%, white);
-  --btn-text:         #374151;
+	/* Gradient colours — override in variant classes */
+	--btn-top: #ffffff;
+	--btn-bottom: #e2edf5;
+	--btn-top-hover: var(--btn-top);
+	--btn-bottom-hover: color-mix(in srgb, var(--btn-bottom) 80%, white);
+	--btn-text: #374151;
 
-  /* Border colours default to the gradient's own dark end */
-  --btn-border:       var(--btn-bottom);
-  --btn-border-bottom:     color-mix(in srgb, var(--btn-bottom) 80%, black);
+	/* Border colours default to the gradient's own dark end */
+	--btn-border: var(--btn-bottom);
+	--btn-border-bottom: color-mix(in srgb, var(--btn-bottom) 80%, black);
 
-  /* Overlay and hover shadow */
-  --btn-overlay:      rgba(0,0,0,0.06);
-  --btn-shadow-hover: rgba(0,0,0,0.09);
+	/* Overlay and hover shadow */
+	--btn-overlay: rgba(0,0,0,0.06);
+	--btn-shadow-hover: rgba(0,0,0,0.09);
 
-  /* Structure */
-  padding:       8px 18px;
-  border-radius: 3px;
-  font-size:     13px;
-  font-weight:   600;
-  white-space:   nowrap;
-  cursor:        pointer;
-  transition:    box-shadow 0.15s ease;
+	/* Structure */
+	padding: 8px 18px;
+	border-radius: 3px;
+	font-size: 13px;
+	font-weight: 600;
+	white-space: nowrap;
+	cursor: pointer;
+	transition: box-shadow 0.15s ease;
 
-  /* Visual */
-  background:
-    linear-gradient(to right, var(--btn-overlay), transparent 35%, transparent 65%, var(--btn-overlay)),
-    linear-gradient(to bottom, var(--btn-top), var(--btn-bottom));
-  color:         var(--btn-text);
-  border:        1px solid var(--btn-border);
-  border-bottom: 1px solid var(--btn-border-bottom);
-  box-shadow:    none;
+	/* Visual */
+	background:
+		linear-gradient(to right, var(--btn-overlay), transparent 35%, transparent 65%, var(--btn-overlay)),
+		linear-gradient(to bottom, var(--btn-top), var(--btn-bottom));
+	color: var(--btn-text);
+	border: 1px solid var(--btn-border);
+	border-bottom: 1px solid var(--btn-border-bottom);
+	box-shadow: none;
 }
 
 .btn:hover {
-  background:
-    linear-gradient(to right, var(--btn-overlay), transparent 35%, transparent 65%, var(--btn-overlay)),
-    linear-gradient(to bottom, var(--btn-top-hover), var(--btn-bottom-hover));
-  box-shadow: 0 2px 5px var(--btn-shadow-hover);
+	background:
+		linear-gradient(to right, var(--btn-overlay), transparent 35%, transparent 65%, var(--btn-overlay)),
+		linear-gradient(to bottom, var(--btn-top-hover), var(--btn-bottom-hover));
+	box-shadow: 0 2px 5px var(--btn-shadow-hover);
 }
 
 /* plain — borders are intentionally darker than the auto-derived defaults for visibility */
 .btn--plain {
-  --btn-top:           #ffffff;
-  --btn-bottom:        #e2edf5;
-  --btn-top-hover:     #ffffff;
-  --btn-bottom-hover:  #ccdee9;
-  --btn-text:          #374151;
-  --btn-border:        #c5d6e4;
-  --btn-border-bottom: #a8bed1;
+	--btn-top: #ffffff;
+	--btn-bottom: #e2edf5;
+	--btn-top-hover: #ffffff;
+	--btn-bottom-hover: #ccdee9;
+	--btn-text: #374151;
+	--btn-border: #c5d6e4;
+	--btn-border-bottom: #a8bed1;
 }
 
 .btn--primary {
-  --btn-top:           #62c4f6;
-  --btn-bottom:        #3a9cd4;
-  --btn-top-hover:     #74ccf8;
-  --btn-bottom-hover:  #4aaada;
-  --btn-text:          #ffffff;
-  --btn-border:        #2b8dc4;
-  --btn-border-bottom: #1f6d99;
-  --btn-overlay:       rgba(0,0,0,0.05);
-  --btn-shadow-hover:  rgba(15,114,168,0.2);
+	--btn-top: #62c4f6;
+	--btn-bottom: #3a9cd4;
+	--btn-top-hover: #74ccf8;
+	--btn-bottom-hover: #4aaada;
+	--btn-text: #ffffff;
+	--btn-border: #2b8dc4;
+	--btn-border-bottom: #1f6d99;
+	--btn-overlay: rgba(0,0,0,0.05);
+	--btn-shadow-hover: rgba(15,114,168,0.2);
 }
 
 .btn--danger {
-  --btn-top:           #f88080;
-  --btn-bottom:        #d44040;
-  --btn-top-hover:     #fa9090;
-  --btn-bottom-hover:  #e04848;
-  --btn-text:          #ffffff;
-  --btn-border:        #c03030;
-  --btn-border-bottom: #922424;
-  --btn-overlay:       rgba(0,0,0,0.05);
-  --btn-shadow-hover:  rgba(139,16,16,0.2);
+	--btn-top: #f88080;
+	--btn-bottom: #d44040;
+	--btn-top-hover: #fa9090;
+	--btn-bottom-hover: #e04848;
+	--btn-text: #ffffff;
+	--btn-border: #c03030;
+	--btn-border-bottom: #922424;
+	--btn-overlay: rgba(0,0,0,0.05);
+	--btn-shadow-hover: rgba(139,16,16,0.2);
 }

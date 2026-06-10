@@ -3,13 +3,13 @@
 }
 
 .position-details .position-details-data {
-  padding: 12px 24px 0;
-  overflow: auto;
-  min-width: 295px;
-  max-width: 780px;
-  box-sizing: border-box;
-  height: 100%;
-  width: 100%;
+	padding: 12px 24px 0;
+	overflow: auto;
+	min-width: 295px;
+	max-width: 780px;
+	box-sizing: border-box;
+	height: 100%;
+	width: 100%;
 }
 
 .position-details .confirm-removal-question {
@@ -18,27 +18,27 @@
 }
 
 .position-details .position-details-data > header {
-  margin-bottom: 12px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  column-gap: 8px;
-  row-gap: 5px;
+	margin-bottom: 12px;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	column-gap: 8px;
+	row-gap: 5px;
 }
 
 .position-details .position-details-data > header > h2 {
-  flex: 1 0 auto;
-  max-width: 100%;
-  color: #1a9de8;
-  margin: 0;
+	flex: 1 0 auto;
+	max-width: 100%;
+	color: #1a9de8;
+	margin: 0;
 }
 
 .position-details .position-details-data > header > .controls {
-  display: flex;
-  flex-shrink: 0;
-  max-width: 100%;
-  flex-wrap: wrap;
-  gap: 8px;
+	display: flex;
+	flex-shrink: 0;
+	max-width: 100%;
+	flex-wrap: wrap;
+	gap: 8px;
 }
 
 .position-details .position-details-data .responsive-row {
@@ -149,11 +149,11 @@
 }
 
 .position-details .position-details-data .important-links ul li a span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    min-width: 0;
-    flex: 1 1 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	min-width: 0;
+	flex: 1 1 0;
 }
 
 .position-details .position-details-data .important-links ul li a::after {
