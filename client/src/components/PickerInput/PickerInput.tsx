@@ -18,6 +18,7 @@ export default function PickerInput ({
 	const [popoverShowing, setPopoverShowing] = useState<boolean>(false),
 		wrapperRef = useRef<HTMLDivElement | null>(null),
 		inputRef = useRef<HTMLInputElement | null>(null),
+		buttonRef = useRef<HTMLButtonElement | null>(null),
 		popoverId = useId(),
 		anchorName = `--picker-${popoverId}`;
 
@@ -38,6 +39,7 @@ export default function PickerInput ({
 		}
 
 		setPopoverShowing(false);
+		inputRef.current?.focus();
 	}
 
 	return (
@@ -65,6 +67,7 @@ export default function PickerInput ({
 					<button
 						type="button"
 						className="toggle-picker"
+						ref={buttonRef}
 						aria-label={buttonAriaLabel}
 						aria-controls={popoverId}
 						aria-expanded={popoverShowing}
@@ -74,6 +77,7 @@ export default function PickerInput ({
 					</button>
 					<Popover
 						wrapperRef={wrapperRef}
+						buttonRef={buttonRef}
 						anchorName={anchorName}
 						id={popoverId}
 						showing={popoverShowing}
@@ -92,6 +96,7 @@ export default function PickerInput ({
 
 function Popover ({
 	wrapperRef,
+	buttonRef,
 	anchorName,
 	id,
 	showing,
@@ -102,7 +107,8 @@ function Popover ({
 
 	usePopoverApi(showing, popoverRef, wrapperRef);
 	useCloseOnOutsideClick(wrapperRef, setShowing, showing);
-	useCloseOnEscape(setShowing, showing);
+	useCloseOnEscape(popoverRef, buttonRef, setShowing, showing);
+	useCloseOnFocusOut(wrapperRef, setShowing, showing);
 
 	return (
 		<div
@@ -142,8 +148,6 @@ function useCloseOnOutsideClick (
 	showing: boolean
 ) {
 	useEffect(() => {
-		const wrapper = wrapperRef.current;
-
 		let timeoutId: number | undefined;
 
 		if (showing) {
@@ -153,7 +157,7 @@ function useCloseOnOutsideClick (
 		}
 
 		function handleClick (event: MouseEvent) {
-			if (wrapper && !wrapper.contains(event.target as Node | null)) {
+			if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node | null)) {
 				setShowing(false);
 			}
 		}
@@ -165,25 +169,55 @@ function useCloseOnOutsideClick (
 	}, [wrapperRef, setShowing, showing]);
 }
 
-function useCloseOnEscape (
+function useCloseOnFocusOut (
+	wrapperRef: React.RefObject<HTMLDivElement | null>,
 	setShowing: React.Dispatch<React.SetStateAction<boolean>>,
 	showing: boolean
 ) {
 	useEffect(() => {
-		if (showing) {
-			document.addEventListener("keydown", handleKeyDown);
+		const wrapper = wrapperRef.current;
+
+		if (wrapper && showing) {
+			wrapper.addEventListener("focusout", handleFocusOut);
 		}
 
-		function handleKeyDown (event: KeyboardEvent) {
-			if (event.key === "Escape") {
+		function handleFocusOut (event: FocusEvent) {
+			if (wrapperRef.current && !wrapperRef.current.contains(event.relatedTarget as Node)) {
 				setShowing(false);
 			}
 		}
 
 		return () => {
-			document.removeEventListener("keydown", handleKeyDown);
+			wrapper?.removeEventListener("focusout", handleFocusOut);
 		};
-	}, [setShowing, showing]);
+	}, [wrapperRef, setShowing, showing]);
+}
+
+function useCloseOnEscape (
+	popoverRef: React.RefObject<HTMLDivElement | null>,
+	buttonRef: React.RefObject<HTMLButtonElement | null>,
+	setShowing: React.Dispatch<React.SetStateAction<boolean>>,
+	showing: boolean
+) {
+	useEffect(() => {
+		const popover = popoverRef.current;
+
+		if (popover && showing) {
+			popover.addEventListener("keydown", handleKeyDown);
+		}
+
+		function handleKeyDown (event: KeyboardEvent) {
+			if (event.key === "Escape") {
+				setShowing(false);
+				buttonRef.current?.focus();
+				event.stopPropagation();
+			}
+		}
+
+		return () => {
+			popover?.removeEventListener("keydown", handleKeyDown);
+		};
+	}, [popoverRef, buttonRef, setShowing, showing]);
 }
 
 export type PickerInputProps = Omit<FieldWrapperProps, "children"> &
@@ -195,6 +229,7 @@ export type PickerInputProps = Omit<FieldWrapperProps, "children"> &
 
 type PopoverProps = {
 	wrapperRef: React.RefObject<HTMLDivElement | null>,
+	buttonRef: React.RefObject<HTMLButtonElement | null>,
 	anchorName: string,
 	id: string,
 	showing: boolean,
