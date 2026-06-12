@@ -58,9 +58,7 @@ export function serializeFormData (formData: FormData): SubmittedPosition {
 	for (const interview of formData.interviews) {
 		const scheduled = interview.scheduled as unknown as {date: Date, time: string};
 
-		(interview as {scheduled: unknown}).scheduled = new Date(
-			scheduled.date.toLocaleDateString("en-US") + " " + normalizeTimeString(scheduled.time)
-		);
+		(interview as {scheduled: unknown}).scheduled = combineDateTime(scheduled.date, scheduled.time);
 	}
 
 	return formData as unknown as SubmittedPosition;
@@ -177,6 +175,22 @@ function normalizeTimeString (value: string) {
 	}
 
 	return normalized;
+}
+
+function combineDateTime (date: Date, time: string): Date {
+	const [rawHour, minuteAndMeridiem] = normalizeTimeString(time).split(":"),
+		[rawMinute, meridiem] = minuteAndMeridiem.split(" "),
+		minutes = Number(rawMinute);
+	
+	let hours = Number(rawHour);
+
+	if (meridiem === "pm" && hours !== 12) {
+		hours += 12;
+	} else if (meridiem === "am" && hours === 12) {
+		hours = 0;
+	};
+
+	return new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, minutes);
 }
 
 function serializeDate (value: string) {
