@@ -1,0 +1,130 @@
+.time-input .clock-icon {
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.4px;
+	width: 75%;
+	height: 75%;
+}
+
+.time-input .clock-icon path {
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.time-input .time-picker {
+	width: 202px;
+	padding: 12px;
+}
+
+.time-input .time-picker .header {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 6px;
+	font-weight: 700;
+}
+
+.time-input .time-picker .header .set-mode {
+	font-size: 30px;
+	font-variant-numeric: tabular-nums;
+	color: #c0cdd8;
+	background: none;
+	border: none;
+	cursor: pointer;
+	border-radius: 5px;
+	padding: 2px 5px;
+	transition: all .1s;
+	font-family: inherit;
+	line-height: 1;
+}
+
+.time-input .time-picker .header .set-mode.selected {
+	color: #3a9cd4;
+	background: #edf5fb;
+}
+
+.time-input .time-picker .header .colon {
+	font-size: 28px;
+	color: #c0cdd8;
+	padding: 0 1px;
+	margin-top: -2px;
+}
+
+.time-input .time-picker .header .ampm-select {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	margin-left: 8px;
+}
+
+.time-input .time-picker .header .ampm-select button {
+	font-size: 11px;
+	padding: 3px 7px;
+}
+
+.time-input .time-picker .hint {
+	font-size: 11px;
+	color: #b0bec5;
+	text-align: center;
+	margin-bottom: 8px;
+	height: 16px;
+}
+
+.time-input .time-picker .clock-face {
+	position: relative;
+	border-radius: 50%;
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	margin: 0 auto 10px;
+}
+
+.time-input .time-picker .clock-face button {
+	position: absolute;
+	transform: translate(-50%, -50%);
+	border-radius: 50%;
+	width: 28px;
+	height: 28px;
+	background: none;
+	border: none;
+	cursor: pointer;
+	transition: background .1s, color .1s;
+}
+
+.time-input .time-picker .clock-face button:hover {
+	background: rgba(58,156,212,.12);
+	color: #3a9cd4;
+}
+
+.time-input .time-picker .clock-face button.selected {
+	background: #3a9cd4;
+	color: #ffffff;
+}
+
+.time-input .time-picker .clock-face .clock-hand {
+	position: absolute;
+	width: 2px;
+	height: 60px;
+	background: #3a9cd4;
+	border-radius: 2px 2px 0 0;
+	transform-origin: 50% 100%;
+	bottom: 50%;
+	left: calc(50% - 1px);
+	transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.time-input .time-picker .clock-face .center-dot {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: #3a9cd4;
+}
+
+.time-input .time-picker button.set-time {
+	width: 100%;
+	padding: 6px;
+	font-size: 12px;
+}

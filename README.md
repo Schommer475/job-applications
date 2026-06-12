@@ -20,6 +20,14 @@ A full-stack web app for tracking job applications and interviews during a job s
 
 The client uses the React 19 compiler, which handles memoization automatically. Manual use of `useMemo` and `useCallback` is therefore generally unnecessary and has been omitted — their absence is intentional, not an oversight.
 
+### Time Picker Header: Inverted Tab Order
+
+The hour/minute mode buttons and AM/PM buttons in the time picker header place `tabIndex={0}` on the **unselected** button and `tabIndex={-1}` on the **selected** one. This is the inverse of the standard roving tabindex pattern.
+
+The rationale: clicking or pressing the already-selected button is a no-op, so removing it from the tab order costs nothing functionally. What's gained is efficiency: a keyboard user editing minutes doesn't have to tab past the already-active minute button to reach the hour button (or vice versa), and the AM/PM group contributes one Tab stop rather than two.
+
+The standard alternative, a toolbar/radio group with arrow key navigation, is well-known to screen reader users but poorly discoverable for sighted keyboard users who rely on Tab. The chosen pattern keeps all navigation on Tab, which is the most universal keyboard primitive. Each button already carries a descriptive `aria-label` and `aria-pressed` state, so the current selection remains discoverable to assistive technology even though the active button is not in the tab sequence. The clock face reinforces the discoverability of the current selection: it receives focus automatically when the user switches between editing hours and minutes, and its slider role announces which unit is being edited along with its current value via `aria-label`, `aria-valuenow`, and `aria-valuemin`/`aria-valuemax`, giving screen reader users a complete picture at the point they need it.
+
 ### JWT Strategy
 
 Two choices here differ from common production patterns, both accepted as complexity tradeoffs given the project's scope:
@@ -119,3 +127,4 @@ job-applications/
 - [ ] PATCH endpoint implementation
 - [ ] Frontend: connect to API, build out views
 - [ ] Caching on read endpoints
+- [ ] URL sanitization
