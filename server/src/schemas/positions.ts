@@ -24,7 +24,10 @@ export const positionInput = z.object({
 			minutes: z.nullish(z.int().nonnegative().max(59))
 		})),
 		location: z.nullish(z.string()),
-		meetingLink: z.nullish(z.url())
+		meetingLink: z.nullish(z.url({
+			protocol: /^https?$/,
+			hostname: z.regexes.domain
+		}))
 	}))
 });
 

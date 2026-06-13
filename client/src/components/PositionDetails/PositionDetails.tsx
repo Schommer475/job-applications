@@ -5,6 +5,7 @@ import PendingOverlay from "../PendingOverlay";
 import MessageOverlay from "../MessageOverlay";
 import ConfirmationOverlay from "../ConfirmationOverlay";
 import {useState} from "react";
+import {sanitizeUrl} from "@braintree/sanitize-url";
 import "./PositionDetails.css";
 
 // TODO wire up edit button
@@ -135,7 +136,13 @@ function PositionDetailsData ({position, label, onRemove}: PositionDetailsDataPr
 						<ul>
 							{position.importantLinks.map(link => (
 								<li>
-									<a href={link.url}><span>{link.label}</span></a>
+									<a
+										href={sanitizeUrl(link.url)}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										<span>{link.label}</span>
+									</a>
 								</li>
 							))}
 						</ul>
@@ -162,13 +169,31 @@ function Interview ({label, scheduled, duration, location, meetingLink}: Positio
 	}
 
 	if (location && meetingLink) {
-		locationContent = <p className="where">{location} <a href={meetingLink}>Join Meeting</a></p>;
+		locationContent = (
+			<p className="where">
+				{location}
+				<a
+					href={sanitizeUrl(meetingLink)}
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					Join Meeting
+				</a>
+			</p>
+		);
 	} else if (location) {
 		locationContent = <p className="where">{location}</p>;
 	} else if (meetingLink) {
 		locationContent = (
 			<p className="where">
-				Remote <a href={meetingLink}>Join Meeting</a>
+				Remote
+				<a
+					href={sanitizeUrl(meetingLink)}
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					Join Meeting
+				</a>
 			</p>
 		);
 	}

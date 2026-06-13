@@ -127,4 +127,4 @@ job-applications/
 - [ ] PATCH endpoint implementation
 - [ ] Frontend: connect to API, build out views
 - [ ] Caching on read endpoints
-- [ ] URL sanitization
+- [x] URL sanitization
