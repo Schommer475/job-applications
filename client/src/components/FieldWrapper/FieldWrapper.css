@@ -50,6 +50,10 @@
 	font-size: 11.5px;
 	color: #ef4444;
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	gap: 4px;
+}
+
+.field-wrapper.error > .error-message > .error-icon {
+	margin-block-start: calc((1lh - 12px) / 2);
 }
