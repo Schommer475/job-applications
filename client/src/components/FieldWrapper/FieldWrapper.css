@@ -53,19 +53,3 @@
 	align-items: center;
 	gap: 4px;
 }
-
-.field-wrapper > .error-message > svg.error-icon {
-	width: 12px;
-	height:12px;
-	fill: none;
-}
-
-.field-wrapper > .error-message > svg.error-icon > circle {
-	stroke: #ef4444;
-}
-
-.field-wrapper > .error-message > svg.error-icon > path {
-	stroke: #ef4444;
-	stroke-width: 1.2;
-	stroke-linecap: round;
-}

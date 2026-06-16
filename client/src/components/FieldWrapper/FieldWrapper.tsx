@@ -1,5 +1,6 @@
 import {useId} from "react";
 import type React from "react";
+import ErrorIcon from "../ErrorIcon";
 import "./FieldWrapper.css";
 
 export default function FieldWrapper ({
@@ -47,22 +48,6 @@ export default function FieldWrapper ({
 				<ErrorIcon />{error}
 			</span>
 		</div>
-	);
-}
-
-function ErrorIcon () {
-	return (
-		<svg className="error-icon" aria-hidden="true" viewBox="0 0 12 12">
-			<circle cx="6" cy="6" r="5.5" />
-			<path
-				d="
-					M 6,3.5
-					v 3
-					M 6,8
-					v .5
-				"
-			/>
-		</svg>
 	);
 }
 
