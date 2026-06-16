@@ -128,14 +128,16 @@ function PositionDetailsData ({position, label, onRemove}: PositionDetailsDataPr
 					<div className="interviews">
 						<h3>Interviews</h3>
 						<ul>
-							{position.interviews.map(interview => <Interview {...interview} />)}
+							{position.interviews.map((interview, index) => (
+								<Interview key={index} {...interview} />
+							))}
 						</ul>
 					</div>
 					<div className="important-links">
 						<h3>Important Links</h3>
 						<ul>
-							{position.importantLinks.map(link => (
-								<li>
+							{position.importantLinks.map((link, index) => (
+								<li key={index}>
 									<a
 										href={sanitizeUrl(link.url)}
 										target="_blank"
