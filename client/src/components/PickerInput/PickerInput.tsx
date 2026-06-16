@@ -13,6 +13,7 @@ export default function PickerInput ({
 	buttonIcon,
 	"aria-describedby": describedBy,
 	children,
+	ref,
 	...inputProperties
 }: PickerInputProps) {
 	const [popoverShowing, setPopoverShowing] = useState<boolean>(false),
@@ -57,7 +58,15 @@ export default function PickerInput ({
 				>
 					<input
 						id={id}
-						ref={inputRef}
+						ref={(element: HTMLInputElement) => {
+							inputRef.current = element;
+
+							if (typeof ref === "function") {
+								ref(element);
+							} else if (ref) {
+								ref.current = element;
+							}
+						}}
 						className="field-input picker-input"
 						required={required}
 						aria-invalid={Boolean(error)}
