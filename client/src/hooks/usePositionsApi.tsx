@@ -1,5 +1,6 @@
 import useUserId from "../components/UserContext/useUserId.tsx";
 import * as positions from "../api/positions.ts";
+import type {SubmittedPosition} from "../api/positions.ts";
 import {useRef, useEffect} from "react";
 import type React from "react";
 
@@ -8,6 +9,19 @@ export default function usePositionsApi () {
 		inflightRequestAbortersRef = useRef<AbortController[]>([]);
 
 	useCleanupOnUserChange(userId, inflightRequestAbortersRef);
+
+	async function create (position: SubmittedPosition) {
+		const requestAbortController = new AbortController();
+
+		inflightRequestAbortersRef.current.push(requestAbortController);
+
+		try {
+			await positions.create(userId, position, requestAbortController);
+		} finally {
+			inflightRequestAbortersRef.current = inflightRequestAbortersRef.current
+				.filter(aborter => aborter !== requestAbortController);
+		}
+	}
 
 	async function getById (
 		id: number,
@@ -37,6 +51,19 @@ export default function usePositionsApi () {
 
 		return position;
 	}
+	
+	async function update (id: number, position: SubmittedPosition) {
+		const requestAbortController = new AbortController();
+
+		inflightRequestAbortersRef.current.push(requestAbortController);
+
+		try {
+			await positions.update(userId, id, position, requestAbortController);
+		} finally {
+			inflightRequestAbortersRef.current = inflightRequestAbortersRef.current
+				.filter(aborter => aborter !== requestAbortController);
+		}
+	}
 
 	async function remove (id: number) {
 		const requestAbortController = new AbortController();
@@ -52,7 +79,9 @@ export default function usePositionsApi () {
 	}
 
 	return {
+		create,
 		getById,
+		update,
 		remove
 	};
 }
