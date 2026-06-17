@@ -1,8 +1,7 @@
 // TODO: for now, this file is mocks, replace with actual calls
 
-export async function getById (userId: number, id: number, abortController: AbortController): Promise<Position> {
-	return await new Promise<Position>(resolve => setTimeout(() => resolve({
-		id,
+const mockPosition: Position = {
+		id: 0,
 		company: "Principal",
 		title: "Software Engineer II",
 		status: {
@@ -29,7 +28,7 @@ export async function getById (userId: number, id: number, abortController: Abor
 		interviews: [{
 			label: "Video Screening",
 			scheduled: "2026-05-26T15:30:00.000Z",
-			location: "4604 EP True Parkway Unit #4203, West Des Moines",
+			location: "3785 Blackwell Street, Cordova AK 99574",
 			meetingLink: "foo_bar"
 		}, {
 			label: "Video Screening",
@@ -38,7 +37,7 @@ export async function getById (userId: number, id: number, abortController: Abor
 				hours: 1,
 				minutes: 30
 			},
-			location: "4604 EP True Parkway Unit #4203, West Des Moines"
+			location: "3785 Blackwell Street, Cordova AK 99574"
 		}, {
 			label: "Video Screening",
 			scheduled: "2026-05-26T15:30:00.000Z",
@@ -53,7 +52,32 @@ export async function getById (userId: number, id: number, abortController: Abor
 				minutes: 30
 			}
 		}]
-	}), 650));
+	};
+
+let mockId = 1;
+
+export async function getById (userId: number, id: number, abortController: AbortController): Promise<Position> {
+	return await new Promise<Position>(resolve => setTimeout(() => resolve({...mockPosition, id}), 650));
+}
+
+export async function create (
+	userId: number,
+	position: SubmittedPositon,
+	abortController: AbortController
+): Promise<Position> {
+	return await new Promise(resolve => setTimeout(() => resolve({
+		...mockPosition,
+		id: mockId++
+	}), 600));
+}
+
+export async function update (
+	userId: number,
+	id: number,
+	position: SubmittedPositon,
+	abortController: AbortController
+): Promise<Position> {
+	return await new Promise(resolve => setTimeout(() => resolve({...mockPosition, id}), 600));
 }
 
 export async function remove (userId: number, id: number, abortController: AbortController) {
@@ -86,6 +110,34 @@ export type Position = {
 	interviews: {
 		label: string,
 		scheduled: string,
+		duration?: Nullish<{
+			hours?: Nullish<number>,
+			minutes?: Nullish<number>
+		}>,
+		location?: Nullish<string>,
+		meetingLink?: Nullish<string>
+	}[]
+};
+
+export type SubmittedPosition = {
+	company: string,
+	title: string,
+	status: {
+		id: number
+	},
+	dateApplied: Nullish<Date>,
+	workArrangement: {
+		type: string,
+		travelMinutes?: Nullish<number>
+	},
+	notes?: Nullish<string>,
+	importantLinks: {
+		label: string,
+		url: string
+	}[],
+	interviews: {
+		label: string,
+		scheduled: Date,
 		duration?: Nullish<{
 			hours?: Nullish<number>,
 			minutes?: Nullish<number>
