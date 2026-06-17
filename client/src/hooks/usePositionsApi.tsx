@@ -11,36 +11,58 @@ export default function usePositionsApi () {
 	useCleanupOnUserChange(userId, inflightRequestAbortersRef);
 
 	async function create (position: SubmittedPosition) {
-		const requestAbortController = new AbortController();
-
-		inflightRequestAbortersRef.current.push(requestAbortController);
-
-		try {
-			await positions.create(userId, position, requestAbortController);
-		} finally {
-			inflightRequestAbortersRef.current = inflightRequestAbortersRef.current
-				.filter(aborter => aborter !== requestAbortController);
-		}
+		return await runRequest((requestAbortController) => positions.create(
+			userId,
+			position,
+			requestAbortController
+		));
 	}
 
 	async function getById (
 		id: number,
 		abortController?: AbortController
 	) {
+		return await runRequest(
+			(requestAbortController) => positions.getById(userId, id, requestAbortController),
+			abortController
+		);
+	}
+	
+	async function update (id: number, position: SubmittedPosition) {
+		return await runRequest((requestAbortController) => positions.update(
+			userId,
+			id,
+			position,
+			requestAbortController
+		));
+	}
+
+	async function remove (id: number) {
+		return await runRequest((requestAbortController) => positions.remove(
+			userId,
+			id,
+			requestAbortController
+		));
+	}
+
+	async function runRequest <T> (
+		execute: ((abortController: AbortController) => Promise<T>),
+		externalAbortController?: AbortController
+	): Promise<T> {
 		const requestAbortController = new AbortController();
 
-		let position;
+		let result: T;
 
-		if (abortController) {
-			abortController.signal.addEventListener("abort", forwardAbortSignal);
+		if (externalAbortController) {
+			externalAbortController.signal.addEventListener("abort", forwardAbortSignal);
 		}
 
 		inflightRequestAbortersRef.current.push(requestAbortController);
 
 		try {
-			position = await positions.getById(userId, id, requestAbortController);
+			result = await execute(requestAbortController);
 		} finally {
-			abortController?.signal.removeEventListener("abort", forwardAbortSignal);
+			externalAbortController?.signal.removeEventListener("abort", forwardAbortSignal);
 			inflightRequestAbortersRef.current = inflightRequestAbortersRef.current
 				.filter(aborter => aborter !== requestAbortController);
 		}
@@ -49,33 +71,7 @@ export default function usePositionsApi () {
 			requestAbortController.abort();
 		}
 
-		return position;
-	}
-	
-	async function update (id: number, position: SubmittedPosition) {
-		const requestAbortController = new AbortController();
-
-		inflightRequestAbortersRef.current.push(requestAbortController);
-
-		try {
-			await positions.update(userId, id, position, requestAbortController);
-		} finally {
-			inflightRequestAbortersRef.current = inflightRequestAbortersRef.current
-				.filter(aborter => aborter !== requestAbortController);
-		}
-	}
-
-	async function remove (id: number) {
-		const requestAbortController = new AbortController();
-
-		inflightRequestAbortersRef.current.push(requestAbortController);
-
-		try {
-			await positions.remove(userId, id, requestAbortController);
-		} finally {
-			inflightRequestAbortersRef.current = inflightRequestAbortersRef.current
-				.filter(aborter => aborter !== requestAbortController);
-		}
+		return result;
 	}
 
 	return {
