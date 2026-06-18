@@ -55,10 +55,18 @@ export function serializeFormData (formData: FormData): SubmittedPosition {
 		);
 	}
 
+	for (const importantLink of formData.importantLinks) {
+		delete (importantLink as Record<string, unknown>).identifier;
+	}
+
 	for (const interview of formData.interviews) {
 		const scheduled = interview.scheduled as unknown as {date: Date, time: string};
 
-		(interview as {scheduled: unknown}).scheduled = combineDateTime(scheduled.date, scheduled.time);
+		(interview as {scheduled: unknown}).scheduled = combineDateTime(
+			scheduled.date,
+			scheduled.time
+		);
+		delete (interview as Record<string, unknown>).identifier;
 	}
 
 	return formData as unknown as SubmittedPosition;
@@ -181,7 +189,7 @@ function combineDateTime (date: Date, time: string): Date {
 	const [rawHour, minuteAndMeridiem] = normalizeTimeString(time).split(":"),
 		[rawMinute, meridiem] = minuteAndMeridiem.split(" "),
 		minutes = Number(rawMinute);
-	
+
 	let hours = Number(rawHour);
 
 	if (meridiem === "pm" && hours !== 12) {

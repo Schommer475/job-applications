@@ -1,6 +1,7 @@
 import type {Status} from "../../api/statuses.ts";
 import type {Position} from "../../api/positions.ts";
-import React, {useReducer} from "react";
+import {useReducer} from "react";
+import type React from "react";
 
 export default function useFormData (
 	initialData: InitialData
@@ -587,6 +588,14 @@ export type Input = {
 	error?: string | null
 };
 
+export type FormDataAction = UpdateFieldAction |
+	SetErrorAction |
+	AddImportantLinkAction |
+	RemoveImportantLinkAction |
+	AddInterviewAction |
+	RemoveInterviewAction |
+	ClearErrorsAction;
+
 type Select = Input & {
 	options: {
 		value: string,
@@ -599,14 +608,6 @@ type InputPatch = {
 } | {
 	error: string | null
 };
-
-type FormDataAction = UpdateFieldAction |
-	SetErrorAction |
-	AddImportantLinkAction |
-	RemoveImportantLinkAction |
-	AddInterviewAction |
-	RemoveInterviewAction |
-	ClearErrorsAction;
 
 type UpdateFieldAction = {
 	type: "update field",
@@ -657,18 +658,21 @@ type BaseFieldSpecifier = {
 };
 
 type ImportantLinkFieldSpecifier = {
-	path: "importantLinks.label" |
-		"importantLinks.url",
+	path: `importantLinks.${ImportantLinkField}`,
 	importantLinkIdentity: string
 };
 
 type InterviewFieldSpecifier = {
-	path: "interviews.label" |
-		"interviews.scheduled:date" |
-		"interviews.scheduled:time" |
-		"interviews.duration:hours" |
-		"interviews.duration:minutes" |
-		"interviews.location" |
-		"interviews.meetingLink",
+	path: `interviews.${InterviewField}`,
 	interviewIdentity: string
 };
+
+type ImportantLinkField = "label" | "url";
+
+type InterviewField = "label" |
+	"scheduled:date" |
+	"scheduled:time" |
+	"duration:hours" |
+	"duration:minutes" |
+	"location" |
+	"meetingLink";

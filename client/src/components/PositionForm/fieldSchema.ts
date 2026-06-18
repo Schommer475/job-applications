@@ -17,11 +17,11 @@ export const fieldSchema: Record<FieldSpecifier["path"], FieldRule> = {
 	"dateApplied": {
 		validationRules: ["date"],
 		serializeAs: "date",
-		label: "Date applied"
+		label: "Date Applied"
 	},
 	"workArrangement:type": {
 		required: true,
-		label: "Work arrangement"
+		label: "Work Arrangement"
 	},
 	"workArrangement:travelMinutes": {
 		validationRules: [
@@ -30,34 +30,39 @@ export const fieldSchema: Record<FieldSpecifier["path"], FieldRule> = {
 		],
 		validationDescription: "must be a non-negative whole number",
 		serializeAs: "number",
-		label: "Travel minutes"
+		label: "Travel Minutes"
 	},
 	"notes": {
 		label: "Notes"
 	},
 	"importantLinks.label": {
 		required: true,
-		label: "Link label"
+		label: "Link Label",
+		shortLabel: "Label"
 	},
 	"importantLinks.url": {
 		required: true,
 		validationRules: ["url"],
-		label: "Link URL"
+		label: "Link URL",
+		shortLabel: "URL"
 	},
 	"interviews.label": {
 		required: true,
-		label: "Interview label"
+		label: "Interview Label",
+		shortLabel: "Label"
 	},
 	"interviews.scheduled:date": {
 		required: true,
 		validationRules: ["date"],
 		serializeAs: "date",
-		label: "Interview date"
+		label: "Interview Date",
+		shortLabel: "Date"
 	},
 	"interviews.scheduled:time": {
 		required: true,
 		validationRules: ["time"],
-		label: "Interview time"
+		label: "Interview Time",
+		shortLabel: "Time"
 	},
 	"interviews.duration:hours": {
 		validationRules: [
@@ -66,7 +71,8 @@ export const fieldSchema: Record<FieldSpecifier["path"], FieldRule> = {
 		],
 		validationDescription: "must be a non-negative whole number",
 		serializeAs: "number",
-		label: "Duration hours"
+		label: "Interview Hours",
+		shortLabel: "Hours"
 	},
 	"interviews.duration:minutes": {
 		validationRules: [
@@ -76,14 +82,15 @@ export const fieldSchema: Record<FieldSpecifier["path"], FieldRule> = {
 		],
 		validationDescription: "must be a whole number from 0 to 59",
 		serializeAs: "number",
-		label: "Duration minutes"
+		label: "Interview Minutes",
+		shortLabel: "Minutes"
 	},
 	"interviews.location": {
 		label: "Location"
 	},
 	"interviews.meetingLink": {
 		validationRules: ["url"],
-		label: "Meeting link"
+		label: "Meeting Link"
 	}
 };
 
@@ -92,7 +99,8 @@ export type FieldRule = {
 	validationRules?: ValidationRule[],
 	validationDescription?: string,
 	serializeAs?: "string" | "number" | "date",
-	label: string
+	label: string,
+	shortLabel?: string
 };
 
 export type ValidationRule = "date" |
