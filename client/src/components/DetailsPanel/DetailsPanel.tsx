@@ -4,8 +4,17 @@ import "./DetailsPanel.css";
 import PositionDetails, {usePositionDetailTabManager} from "../PositionDetails";
 import type {DetailTabModel} from "../PositionDetails";
 import MessageOverlay from "../MessageOverlay";
-import {useEffect, useImperativeHandle, useRef, useState} from "react";
+import {
+	useEffect,
+	useImperativeHandle,
+	useRef,
+	useState,
+	createRef
+} from "react";
 import type {NoArgsCallback} from "../../types/callbacks";
+import PositionForm, {usePositionFormTabManager} from "../PositionForm";
+import type {PositionFormApi, FormTabModel} from "../PositionForm";
+import type {Position} from "../../api/positions";
 
 export default function DetailsPanel ({
 	ref,
@@ -14,7 +23,8 @@ export default function DetailsPanel ({
 	onPositionsModified
 }: DetailsPanelProps) {
 	const [errorMessage, setErrorMessage] = useState<string | null>(null),
-		managePositionDetail = usePositionDetailTabManager(),
+		[managePositionDetail, reloadPositionDetail] = usePositionDetailTabManager(),
+		managePositionForm = usePositionFormTabManager(),
 		tabsRef = useRef<TabsAPI | null>(null),
 		stableCallbacks = useStableCallbacks(
 			onTabOpened,
@@ -22,64 +32,170 @@ export default function DetailsPanel ({
 			onPositionsModified
 		);
 
+	// despite being memoized by the react compiler,
+	// linting rules don't suppress exhaustive-deps complaint
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	function openPositionDetails (
+		positionId: number,
+		initialLabel: string,
+		forceReload?: boolean
+	) {
+		const tabs = tabsRef.current,
+			tabId = `position-details-${positionId}`;
+
+		let preExisting = false,
+			opened = false;
+
+		if (tabs && tabs.hasTab(tabId)) {
+			tabs.activateTab(tabId);
+			preExisting = true;
+			opened = true;
+		} else if (tabs) {
+			tabs.addTab(detailTabModelToInputTab(
+				tabId,
+				managePositionDetail(
+					positionId,
+					initialLabel,
+					onModelUpdated,
+					handleEdit,
+					stableCallbacks.onTabClosed
+				)
+			), true);
+			opened = true;
+		}
+
+		if (preExisting && forceReload) {
+			reloadPositionDetail(positionId);
+		}
+
+		if (opened) {
+			stableCallbacks.onTabOpened();
+		}
+
+		function onModelUpdated (detailModel: DetailTabModel) {
+			const tabs = tabsRef.current;
+
+			if (detailModel.status === "removed") {
+				handlePositionRemoved();
+			} else if (tabs && tabs.hasTab(tabId)) {
+				tabs.updateTab(detailTabModelToInputTab(
+					tabId,
+					detailModel as UnremovedDetailTabModel
+				));
+			} else if (detailModel.status === "error" && detailModel.errorSource === "remove") {
+				setErrorMessage(detailModel.errorMessage);
+			}
+		}
+
+		function handleEdit (currentLabel: string) {
+			openPositionForm({
+				positionId,
+				initialPositionLabel: currentLabel
+			});
+		}
+
+		function handlePositionRemoved () {
+			const tabs = tabsRef.current;
+
+			if (tabs?.hasTab(tabId)) {
+				tabs.removeTab(tabId);
+			}
+
+			stableCallbacks.onPositionsModified();
+		}
+	}
+
+	// despite being memoized by the react compiler,
+	// linting rules don't suppress exhaustive-deps complaint
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	function openPositionForm (target: PositionFormTarget = {}): void {
+		const formRef = createRef<PositionFormApi | null>(),
+			tabs = tabsRef.current;
+
+		let tabId = "create-position",
+			opened = false;
+
+		if (target.positionId !== undefined) {
+			tabId = "edit-position-" + target.positionId;
+		}
+
+		if (tabs?.hasTab(tabId)) {
+			tabs.activateTab(tabId);
+			opened = true;
+		} else if (tabs) {
+			tabs.addTab(formTabModelToInputTab(
+				tabId,
+				formRef,
+				managePositionForm({
+					...target,
+					onModelUpdated,
+					onClose: stableCallbacks.onTabClosed
+				})
+			), true);
+			opened = true;
+		}
+
+		if (opened) {
+			stableCallbacks.onTabOpened();
+		}
+
+		function onModelUpdated (formModel: FormTabModel) {
+			const tabs = tabsRef.current;
+
+			if (formModel.status === "cancelled") {
+				handleFormCancelled();
+			} else if (formModel.status === "submitted") {
+				handleFormSubmitted(formModel.returnedPosition);
+			} else if (tabs && tabs.hasTab(tabId)) {
+				tabs.updateTab(formTabModelToInputTab(
+					tabId,
+					formRef,
+					formModel
+				));
+			} else if (formModel.submitError) {
+				setErrorMessage(formModel.submitError);
+			}
+		}
+
+		function handleFormCancelled () {
+			const tabs = tabsRef.current;
+
+			if (tabs?.hasTab(tabId)) {
+				tabs.removeTab(tabId);
+			}
+		}
+
+		function handleFormSubmitted (submissionResult: Position) {
+			const tabs = tabsRef.current,
+				forceReload = true;
+
+			if (tabs?.hasTab(tabId)) {
+				tabs.removeTab(tabId);
+			}
+
+			stableCallbacks.onPositionsModified();
+
+			openPositionDetails(
+				submissionResult.id,
+				`${submissionResult.company}: ${submissionResult.title}`,
+				forceReload
+			);
+		}
+	}
+
 	useImperativeHandle(ref, () => ({
 		openPositionDetailsTab (positionId, initialLabel) {
-			const tabs = tabsRef.current,
-				tabId = `position-details-${positionId}`;
-
-			let created = false;
-
-			if (tabs && tabs.hasTab(tabId)) {
-				tabs.activateTab(tabId);
-			} else if (tabs) {
-				tabs.addTab(detailTabModelToInputTab(
-					tabId,
-					managePositionDetail(
-						positionId,
-						initialLabel,
-						onModelUpdated,
-						stableCallbacks.onTabClosed
-					)
-				), true);
-
-				created = true;
-			}
-
-			stableCallbacks.onTabOpened();
-
-			function onModelUpdated (detailModel: DetailTabModel) {
-				const tabs = tabsRef.current;
-
-				if (detailModel.status === "removed") {
-					handlePositionRemoved();
-				} else if (tabs && tabs.hasTab(tabId)) {
-					tabs.updateTab(detailTabModelToInputTab(
-						tabId,
-						detailModel as UnremovedDetailTabModel
-					));
-				} else if (detailModel.status === "error" && detailModel.errorSource === "remove") {
-					setErrorMessage(detailModel.errorMessage);
-				}
-			}
-
-			function handlePositionRemoved () {
-				const tabs = tabsRef.current;
-
-				if (tabs?.hasTab(tabId)) {
-					tabs.removeTab(tabId);
-				}
-
-				stableCallbacks.onPositionsModified();
-			}
-
-			return created;
+			openPositionDetails(positionId, initialLabel);
 		},
-		get tabCount () {
+		openCreatePositionFormTab () {
+			openPositionForm();
+		},
+		getTabCount () {
 			return tabsRef.current?.tabCount ?? 0;
 		}
 	}), [
-		managePositionDetail,
-		stableCallbacks
+		openPositionDetails,
+		openPositionForm
 	]);
 
 	return (
@@ -155,9 +271,37 @@ function detailTabModelToInputTab (tabId: string, {
 	};
 }
 
+function formTabModelToInputTab (
+	tabId: string,
+	formRef: React.RefObject<PositionFormApi | null>,
+	{
+		label,
+		closeButtonState,
+		onClose,
+		...tabModel
+	}: ActiveFormTabModel
+): InputTab {
+	function onActivated () {
+		// Delay to let the default panel activation go first
+		window.requestAnimationFrame(() => formRef.current?.takeFocus());
+	}
+
+	return {
+		id: tabId,
+		label,
+		closeButtonState,
+		onClose,
+		onActivated,
+		content: (
+			<PositionForm ref={formRef} label={label} {...tabModel} />
+		)
+	};
+}
+
 export type DetailsPanelAPI = {
-	openPositionDetailsTab: (positionId: number, initialLabel: string) => boolean,
-	readonly tabCount: number
+	openPositionDetailsTab: (positionId: number, initialLabel: string) => void,
+	openCreatePositionFormTab: () => void,
+	getTabCount: () => number
 };
 
 type DetailsPanelProps = {
@@ -169,4 +313,16 @@ type DetailsPanelProps = {
 
 type UnremovedDetailTabModel = DetailTabModel & {
 	status: Exclude<DetailTabModel["status"], "removed">
+};
+
+type ActiveFormTabModel = FormTabModel & {
+	status: Exclude<FormTabModel["status"], "submitted" | "cancelled">
+};
+
+type PositionFormTarget = {
+	positionId: number,
+	initialPositionLabel: string
+} | {
+	positionId?: undefined,
+	initialPositionLabel?: undefined
 };

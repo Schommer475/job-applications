@@ -13,6 +13,7 @@ export default function usePositionDetailTabManager () {
 		positionId: number,
 		initialLabel: string,
 		onModelUpdated: (updatedModel: DetailTabModel) => unknown,
+		onEdit: (label: string) => unknown,
 		onClose?: (props: OnCloseProps) => unknown
 	) {
 		let loadAbortController: AbortController;
@@ -30,6 +31,9 @@ export default function usePositionDetailTabManager () {
 				position: null,
 				label: initialLabel,
 				closeButtonState: "enabled",
+				onEdit () {
+					onEdit(detailModel.label);
+				},
 				onClose (props: OnCloseProps) {
 					loadAbortController.abort();
 					unregisterPosition(positionId);
@@ -173,6 +177,7 @@ export type DetailTabModel = {
 	position: Position | null,
 	// label stored and derived here so it can be routed to both the tab handle and the Detail
 	label: string,
+	onEdit: NoArgsCallback,
 	onRemove: NoArgsCallback,
 	clearError: NoArgsCallback,
 	closeButtonState: "enabled" | "disabled",

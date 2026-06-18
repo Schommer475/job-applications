@@ -8,13 +8,12 @@ import {useState} from "react";
 import {sanitizeUrl} from "@braintree/sanitize-url";
 import "./PositionDetails.css";
 
-// TODO wire up edit button
-
 export default function PositionDetails ({
 	status,
 	errorMessage,
 	position,
 	label,
+	onEdit,
 	onRemove,
 	clearError
 }: PositionDetailsProps) {
@@ -57,6 +56,7 @@ export default function PositionDetails ({
 							<PositionDetailsData
 								position={position}
 								label={label}
+								onEdit={onEdit}
 								onRemove={() => setConfirmingRemoval(true)}
 							/>
 						)}
@@ -67,7 +67,7 @@ export default function PositionDetails ({
 	);
 }
 
-function PositionDetailsData ({position, label, onRemove}: PositionDetailsDataProps) {
+function PositionDetailsData ({position, label, onRemove, onEdit}: PositionDetailsDataProps) {
 	const bubbleStyle = {
 		backgroundColor: position.status.color.background,
 		color: position.status.color.text,
@@ -81,7 +81,7 @@ function PositionDetailsData ({position, label, onRemove}: PositionDetailsDataPr
 				<div className="controls">
 					<Button
 						className="edit"
-						onClick={() => console.log("open edit " + position.id)}
+						onClick={onEdit}
 						aria-label="edit position"
 					>
 						Edit
@@ -174,6 +174,7 @@ function Interview ({label, scheduled, duration, location, meetingLink}: Positio
 		locationContent = (
 			<p className="where">
 				{location}
+				{" "}
 				<a
 					href={sanitizeUrl(meetingLink)}
 					target="_blank"
@@ -189,6 +190,7 @@ function Interview ({label, scheduled, duration, location, meetingLink}: Positio
 		locationContent = (
 			<p className="where">
 				Remote
+				{" "}
 				<a
 					href={sanitizeUrl(meetingLink)}
 					target="_blank"
@@ -244,7 +246,8 @@ export type PositionDetailsProps = {
 	position: Position | null,
 	label: string,
 	onRemove: NoArgsCallback,
-	clearError: NoArgsCallback
+	clearError: NoArgsCallback,
+	onEdit: NoArgsCallback
 } & (
 	{
 		status: "loading" | "removing" | "loaded",
@@ -258,5 +261,6 @@ export type PositionDetailsProps = {
 type PositionDetailsDataProps = {
 	position: Position,
 	label: string,
-	onRemove: NoArgsCallback
+	onRemove: NoArgsCallback,
+	onEdit: NoArgsCallback
 };
