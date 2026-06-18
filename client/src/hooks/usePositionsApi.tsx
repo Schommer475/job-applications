@@ -11,7 +11,7 @@ export default function usePositionsApi () {
 	useCleanupOnUserChange(userId, inflightRequestAbortersRef);
 
 	async function create (position: SubmittedPosition) {
-		return await runRequest((requestAbortController) => positions.create(
+		return await runRequest(requestAbortController => positions.create(
 			userId,
 			position,
 			requestAbortController
@@ -23,13 +23,13 @@ export default function usePositionsApi () {
 		abortController?: AbortController
 	) {
 		return await runRequest(
-			(requestAbortController) => positions.getById(userId, id, requestAbortController),
+			requestAbortController => positions.getById(userId, id, requestAbortController),
 			abortController
 		);
 	}
-	
+
 	async function update (id: number, position: SubmittedPosition) {
-		return await runRequest((requestAbortController) => positions.update(
+		return await runRequest(requestAbortController => positions.update(
 			userId,
 			id,
 			position,
@@ -38,14 +38,14 @@ export default function usePositionsApi () {
 	}
 
 	async function remove (id: number) {
-		return await runRequest((requestAbortController) => positions.remove(
+		return await runRequest(requestAbortController => positions.remove(
 			userId,
 			id,
 			requestAbortController
 		));
 	}
 
-	async function runRequest <T> (
+	async function runRequest<T> (
 		execute: ((abortController: AbortController) => Promise<T>),
 		externalAbortController?: AbortController
 	): Promise<T> {
