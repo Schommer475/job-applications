@@ -1,10 +1,12 @@
 import usePositionsApi from "../../hooks/usePositionsApi.tsx";
+import {useRef} from "react";
 import type {Position} from "../../api/positions.ts";
 import type {NoArgsCallback} from "../../types/callbacks.tsx";
 import type {OnCloseProps} from "../Tabs/index.tsx";
 
 export default function usePositionDetailTabManager () {
-	const positionsApi = usePositionsApi();
+	const positionsApi = usePositionsApi(),
+		{registerPosition, unregisterPosition, reloadPosition} = useReloadRegistry();
 
 	function managePositionDetail (
 		positionId: number,
@@ -17,6 +19,7 @@ export default function usePositionDetailTabManager () {
 		const detailModel: DetailTabModel = init();
 
 		function init (): InitialTabModel {
+			registerPosition(positionId, handleReload);
 			fetchDetails();
 
 			return {
@@ -28,6 +31,7 @@ export default function usePositionDetailTabManager () {
 				closeButtonState: "enabled",
 				onClose (props: OnCloseProps) {
 					loadAbortController.abort();
+					unregisterPosition(positionId);
 					onClose?.(props);
 				},
 				refreshEnabled: false,
@@ -141,7 +145,27 @@ export default function usePositionDetailTabManager () {
 		return detailModel as InitialTabModel;
 	}
 
-	return managePositionDetail;
+	return [managePositionDetail, reloadPosition] as const;
+}
+
+function useReloadRegistry () {
+	const reloads = useRef<Map<number, () => void>>(new Map());
+
+	return {
+		registerPosition (positionId: number, reloadFunc: () => void) {
+			if (reloads.current.has(positionId)) {
+				throw new Error("Managing duplicate position detail");
+			}
+
+			reloads.current.set(positionId, reloadFunc);
+		},
+		unregisterPosition (positionId: number) {
+			reloads.current.delete(positionId);
+		},
+		reloadPosition (positionId: number) {
+			reloads.current.get(positionId)?.();
+		}
+	};
 }
 
 function getErrorMessage (error: unknown) {
