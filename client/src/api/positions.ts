@@ -62,7 +62,7 @@ export async function getById (userId: number, id: number, abortController: Abor
 
 export async function create (
 	userId: number,
-	position: SubmittedPositon,
+	position: SubmittedPosition,
 	abortController: AbortController
 ): Promise<Position> {
 	return await new Promise(resolve => setTimeout(() => resolve({
@@ -74,7 +74,7 @@ export async function create (
 export async function update (
 	userId: number,
 	id: number,
-	position: SubmittedPositon,
+	position: SubmittedPosition,
 	abortController: AbortController
 ): Promise<Position> {
 	return await new Promise(resolve => setTimeout(() => resolve({...mockPosition, id}), 600));
