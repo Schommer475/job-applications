@@ -142,8 +142,8 @@ export default function DetailsPanel ({
 		function onModelUpdated (formModel: FormTabModel) {
 			const tabs = tabsRef.current;
 
-			if (formModel.status === "cancelled") {
-				handleFormCancelled();
+			if (formModel.status === "canceled") {
+				handleFormCanceled();
 			} else if (formModel.status === "submitted") {
 				handleFormSubmitted(formModel.returnedPosition);
 			} else if (tabs && tabs.hasTab(tabId)) {
@@ -157,7 +157,7 @@ export default function DetailsPanel ({
 			}
 		}
 
-		function handleFormCancelled () {
+		function handleFormCanceled () {
 			const tabs = tabsRef.current;
 
 			if (tabs?.hasTab(tabId)) {
@@ -316,7 +316,7 @@ type UnremovedDetailTabModel = DetailTabModel & {
 };
 
 type ActiveFormTabModel = FormTabModel & {
-	status: Exclude<FormTabModel["status"], "submitted" | "cancelled">
+	status: Exclude<FormTabModel["status"], "submitted" | "canceled">
 };
 
 type PositionFormTarget = {

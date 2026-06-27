@@ -57,7 +57,7 @@ export default function usePositionFormTabManager () {
 		function handleCancel () {
 			if (formModel.status === "loaded" || formModel.status === "load-error") {
 				onModelUpdated(Object.assign(formModel, {
-					status: "cancelled"
+					status: "canceled"
 				}));
 			}
 		}
@@ -169,7 +169,7 @@ export type FormTabModel = {
 	initialData: null,
 	submitError: null
 } | {
-	status: "cancelled",
+	status: "canceled",
 	loadErrorMessage: string | null,
 	initialData: InitialData | null,
 	submitError: string | null
