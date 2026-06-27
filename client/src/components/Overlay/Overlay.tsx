@@ -5,20 +5,46 @@ import type {NoArgsCallback} from "../../types/callbacks";
 
 export default function Overlay ({
 	showing,
+	children,
+	...layerProps
+}: OverlayProps) {
+	return (
+		<OverlayFrame overlayLayer={showing && <OverlayLayer {...layerProps} />}>
+			{children}
+		</OverlayFrame>
+	);
+}
+
+Overlay.Frame = OverlayFrame;
+Overlay.Layer = OverlayLayer;
+
+export function OverlayFrame ({overlayLayer, children}: OverlayFrameProps) {
+	return (
+		<div className="overlay">
+			{overlayLayer}
+			<div
+				className="overlay-children"
+				inert={Boolean(overlayLayer) || undefined}
+			>
+				{children}
+			</div>
+		</div>
+	);
+}
+
+export function OverlayLayer ({
 	className,
 	overlayContent,
 	contentProps = {},
 	showFocusTargetRef,
-	onEscape,
-	children,
-	...overlayProps
-}: OverlayProps) {
-	const overlayBoundaryRef = useRef<HTMLDivElement | null>(null),
-		classNames = ["overlay"],
+	onEscape
+}: OverlayLayerProps) {
+	const overlayLayerRef = useRef<HTMLDivElement | null>(null),
+		classNames = ["overlay-layer"],
 		contentClassNames = ["overlay-content"],
 		{className: contentClassName, ...remainingContentProps} = contentProps;
 
-	useFocusManagement(showing, overlayBoundaryRef, showFocusTargetRef);
+	useFocusManagement(overlayLayerRef, showFocusTargetRef);
 
 	if (className) {
 		classNames.push(className);
@@ -36,47 +62,33 @@ export default function Overlay ({
 
 	return (
 		<div
+			ref={overlayLayerRef}
 			className={classNames.join(" ")}
-			{...overlayProps}
+			onKeyDown={handleKeyDown}
 		>
-			{showing && (
-				<div
-					ref={overlayBoundaryRef}
-					className="overlay-boundary"
-					onKeyDown={handleKeyDown}
-				>
-					<div
-						className={contentClassNames.join(" ")}
-						{...remainingContentProps}
-					>
-						{overlayContent}
-					</div>
-				</div>
-			)}
 			<div
-				className="overlay-children"
-				inert={showing || undefined}
+				className={contentClassNames.join(" ")}
+				{...remainingContentProps}
 			>
-				{children}
+				{overlayContent}
 			</div>
 		</div>
 	);
 }
 
 function useFocusManagement (
-	showing: boolean,
-	overlayBoundaryRef: React.RefObject<HTMLDivElement | null>,
+	overlayLayerRef: React.RefObject<HTMLDivElement | null>,
 	showFocusTargetRef?: React.RefObject<{focus (): void} | null>
 ) {
 	useLayoutEffect(() => {
 		const initialFocusTarget = document.activeElement as HTMLElement | null,
 			showFocusTarget = showFocusTargetRef?.current,
-			overlayContent = overlayBoundaryRef.current;
+			overlayContent = overlayLayerRef.current;
 
 		let focusWithinOverlay = true,
 			cleanup;
 
-		if (showing && showFocusTarget) {
+		if (showFocusTarget) {
 			showFocusTarget.focus();
 			overlayContent?.addEventListener("focusout", handleFocusOut);
 			overlayContent?.addEventListener("focusin", handleFocusIn);
@@ -84,7 +96,7 @@ function useFocusManagement (
 
 		if (showFocusTargetRef) {
 			cleanup = () => {
-				if (showing && initialFocusTarget && focusWithinOverlay) {
+				if (initialFocusTarget && focusWithinOverlay) {
 					initialFocusTarget.focus();
 				}
 
@@ -110,14 +122,23 @@ function useFocusManagement (
 		}
 
 		return cleanup;
-	}, [showing, overlayBoundaryRef, showFocusTargetRef]);
+	}, [overlayLayerRef, showFocusTargetRef]);
 }
 
-type OverlayProps = React.ComponentProps<"div"> & {
+type OverlayProps = {
 	showing: boolean,
+	children: React.ReactNode
+} & OverlayLayerProps;
+
+type OverlayFrameProps = {
+	overlayLayer: React.ReactNode,
+	children: React.ReactNode
+};
+
+type OverlayLayerProps = {
+	className?: string | undefined,
 	overlayContent: React.ReactNode,
 	contentProps?: Omit<React.ComponentProps<"div">, "children">,
 	showFocusTargetRef?: React.RefObject<{focus (): void} | null>,
-	onEscape?: NoArgsCallback,
-	children: React.ReactNode
+	onEscape?: NoArgsCallback
 };

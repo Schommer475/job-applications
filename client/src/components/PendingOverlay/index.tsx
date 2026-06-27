@@ -1,1 +1,4 @@
-export {default} from "./PendingOverlay.tsx";
+import PendingOverlay, {PendingOverlayLayer} from "./PendingOverlay.tsx";
+
+export default PendingOverlay;
+export {PendingOverlayLayer};

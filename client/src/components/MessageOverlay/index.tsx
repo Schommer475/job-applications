@@ -1,1 +1,4 @@
-export {default} from "./MessageOverlay.tsx";
+import MessageOverlay, {MessageOverlayLayer} from "./MessageOverlay.tsx";
+
+export default MessageOverlay;
+export {MessageOverlayLayer};

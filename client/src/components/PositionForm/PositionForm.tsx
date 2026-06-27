@@ -16,6 +16,7 @@ import {
 	useImperativeHandle
 } from "react";
 import type React from "react";
+import Overlay from "../Overlay";
 import PendingOverlay from "../PendingOverlay";
 import MessageOverlay from "../MessageOverlay";
 import useFormData from "./useFormData.tsx";
@@ -43,10 +44,18 @@ export default function PositionForm ({
 }: PositionFormProps) {
 	const contentRef = useRef<PositionFormApi | null>(null);
 
-	let pendingMessage = "Loading, please wait";
+	let overlayLayer: React.ReactNode;
 
-	if (status === "submitting") {
-		pendingMessage = "Submitting, please wait";
+	if (status === "loading" || status === "submitting") {
+		overlayLayer = <PendingOverlay.Layer message={computePendingMessage(status)} />;
+	} else if (status === "load-error") {
+		overlayLayer = (
+			<MessageOverlay.Layer
+				title="Error"
+				message={loadErrorMessage ?? ""}
+				onAcknowledge={formDataProps.onCancel}
+			/>
+		);
 	}
 
 	useImperativeHandle(ref, () => ({
@@ -57,24 +66,14 @@ export default function PositionForm ({
 
 	return (
 		<div className="position-form">
-			<PendingOverlay
-				showing={status === "loading" || status === "submitting"}
-				message={pendingMessage}
-			>
-				<MessageOverlay
-					showing={status === "load-error"}
-					title="Error"
-					message={loadErrorMessage ?? ""}
-					onAcknowledge={formDataProps.onCancel}
-				>
-					{formDataProps.initialData && (
-						<PositionFormContent
-							ref={contentRef}
-							{...formDataProps}
-						/>
-					)}
-				</MessageOverlay>
-			</PendingOverlay>
+			<Overlay.Frame overlayLayer={overlayLayer}>
+				{formDataProps.initialData && (
+					<PositionFormContent
+						ref={contentRef}
+						{...formDataProps}
+					/>
+				)}
+			</Overlay.Frame>
 		</div>
 	);
 }
@@ -670,6 +669,12 @@ function useFieldSpecifier (path: FieldPath): FieldSpecifier {
 	}
 
 	return getSpecifier(path);
+}
+
+function computePendingMessage (status: "loading" | "submitting") {
+	const statusCapitalized = status.charAt(0).toUpperCase() + status.slice(1);
+
+	return statusCapitalized + ", please wait";
 }
 
 function renderOptions (options: {value: string, label: string}[]): React.ReactNode {

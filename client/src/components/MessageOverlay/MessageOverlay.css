@@ -1,13 +1,13 @@
-.overlay.message-overlay > .overlay-boundary {
+.overlay-layer.message-overlay {
 	container-type: size;
 }
 
-.overlay.message-overlay > .overlay-boundary > .overlay-content {
+.overlay-layer.message-overlay > .overlay-content {
 	width: 60%;
 	max-width: 450px;
 }
 
-.overlay.message-overlay > .overlay-boundary > .overlay-content > dialog {
+.overlay-layer.message-overlay > .overlay-content > dialog {
 	position: static;
 	display: flex;
 	flex-direction: column;
@@ -21,20 +21,20 @@
 	overflow: hidden;
 }
 
-.overlay.message-overlay > .overlay-boundary > .overlay-content > dialog > h2.title {
+.overlay-layer.message-overlay > .overlay-content > dialog > h2.title {
 	color: #1a9de8;
 	margin: 0;
 	flex-shrink: 0;
 }
 
-.overlay.message-overlay > .overlay-boundary > .overlay-content > dialog > :not(h2.title):not(.acknowledge-button) {
+.overlay-layer.message-overlay > .overlay-content > dialog > :not(h2.title):not(.acknowledge-button) {
 	flex: 1;
 	overflow: auto;
 	min-height: 0;
 	margin: 0;
 }
 
-.overlay.message-overlay > .overlay-boundary > .overlay-content > dialog > .acknowledge-button {
+.overlay-layer.message-overlay > .overlay-content > dialog > .acknowledge-button {
 	align-self: flex-end;
 	flex-shrink: 0;
 }

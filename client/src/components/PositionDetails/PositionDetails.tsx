@@ -1,11 +1,13 @@
 import type {Position} from "../../api/positions.ts";
 import type {NoArgsCallback} from "../../types/callbacks.tsx";
 import Button from "../Button";
+import Overlay from "../Overlay";
 import PendingOverlay from "../PendingOverlay";
 import MessageOverlay from "../MessageOverlay";
 import ConfirmationOverlay from "../ConfirmationOverlay";
 import {useState} from "react";
 import {sanitizeUrl} from "@braintree/sanitize-url";
+import type React from "react";
 import "./PositionDetails.css";
 
 export default function PositionDetails ({
@@ -19,50 +21,49 @@ export default function PositionDetails ({
 }: PositionDetailsProps) {
 	const [confirmingRemoval, setConfirmingRemoval] = useConfirmingRemoval(status);
 
-	let pendingMessage = "Loading, please wait";
+	let overlayLayer: React.ReactNode;
 
-	if (status === "removing") {
-		pendingMessage = "Removal pending, please wait";
+	if (status === "loading" || status === "removing") {
+		overlayLayer = <PendingOverlay.Layer message={computePendingMessage(status)} />;
+	} else if (status === "error") {
+		overlayLayer = (
+			<MessageOverlay.Layer
+				title="Error"
+				message={errorMessage ?? ""}
+				onAcknowledge={clearError}
+			/>
+		);
+	} else if (confirmingRemoval) {
+		overlayLayer = (
+			<ConfirmationOverlay.Layer
+				title="Confirm Removal"
+				message={(
+					<p>
+						<strong className="confirm-removal-question">
+							Are you sure you wish to remove <i>{label}</i>?
+						</strong>
+						This cannot be undone.
+					</p>
+				)}
+				yesButtonVariant="danger"
+				onYes={onRemove}
+				onNo={() => setConfirmingRemoval(false)}
+			/>
+		);
 	}
 
 	return (
 		<div className="position-details">
-			<PendingOverlay
-				showing={status === "loading" || status === "removing"}
-				message={pendingMessage}
-			>
-				<MessageOverlay
-					showing={status === "error"}
-					title="Error"
-					message={errorMessage ?? ""}
-					onAcknowledge={clearError}
-				>
-					<ConfirmationOverlay
-						showing={confirmingRemoval}
-						title="Confirm Removal"
-						message={(
-							<p>
-								<strong className="confirm-removal-question">
-									Are you sure you wish to remove <i>{label}</i>?
-								</strong>
-								This cannot be undone.
-							</p>
-						)}
-						yesButtonVariant="danger"
-						onYes={onRemove}
-						onNo={() => setConfirmingRemoval(false)}
-					>
-						{position && (
-							<PositionDetailsData
-								position={position}
-								label={label}
-								onEdit={onEdit}
-								onRemove={() => setConfirmingRemoval(true)}
-							/>
-						)}
-					</ConfirmationOverlay>
-				</MessageOverlay>
-			</PendingOverlay>
+			<Overlay.Frame overlayLayer={overlayLayer}>
+				{position && (
+					<PositionDetailsData
+						position={position}
+						label={label}
+						onEdit={onEdit}
+						onRemove={() => setConfirmingRemoval(true)}
+					/>
+				)}
+			</Overlay.Frame>
 		</div>
 	);
 }
@@ -240,6 +241,16 @@ function useConfirmingRemoval (
 	}
 
 	return [confirmingRemoval, setConfirmingRemoval];
+}
+
+function computePendingMessage (status: "loading" | "removing") {
+	let pendingMessage = "Loading, please wait";
+
+	if (status === "removing") {
+		pendingMessage = "Removal pending, please wait";
+	}
+
+	return pendingMessage;
 }
 
 export type PositionDetailsProps = {

@@ -6,6 +6,19 @@ import "./ConfirmationOverlay.css";
 
 export default function ConfirmationOverlay ({
 	showing,
+	children,
+	...layerProps
+}: ConfirmationOverlayProps) {
+	return (
+		<Overlay.Frame overlayLayer={showing && <ConfirmationOverlayLayer {...layerProps} />}>
+			{children}
+		</Overlay.Frame>
+	);
+}
+
+ConfirmationOverlay.Layer = ConfirmationOverlayLayer;
+
+export function ConfirmationOverlayLayer ({
 	title,
 	message,
 	yesButtonVariant = "primary",
@@ -14,11 +27,9 @@ export default function ConfirmationOverlay ({
 	noButtonVariant = "plain",
 	noButtonText = "No",
 	onNo,
-	children,
 	className,
-	dialogProps = {},
-	...otherProps
-}: ConfirmationOverlayProps) {
+	dialogProps = {}
+}: ConfirmationOverlayLayerProps) {
 	const headerId = useId(),
 		noButtonRef = useRef<HTMLButtonElement | null>(null),
 		classNames = ["confirmation-overlay"];
@@ -34,10 +45,8 @@ export default function ConfirmationOverlay ({
 	}
 
 	return (
-		<Overlay
+		<Overlay.Layer
 			className={classNames.join(" ")}
-			showing={showing}
-			{...otherProps}
 			showFocusTargetRef={noButtonRef}
 			onEscape={onNo}
 			overlayContent={(
@@ -69,9 +78,7 @@ export default function ConfirmationOverlay ({
 					</div>
 				</dialog>
 			)}
-		>
-			{children}
-		</Overlay>
+		/>
 	);
 }
 
@@ -87,8 +94,13 @@ function normalizeMessage (message: React.ReactNode) {
 	return normalized;
 }
 
-type ConfirmationOverlayProps = React.ComponentProps<"div"> & {
+type ConfirmationOverlayProps = {
 	showing: boolean,
+	children: React.ReactNode
+} & ConfirmationOverlayLayerProps;
+
+type ConfirmationOverlayLayerProps = {
+	className?: string | undefined,
 	title?: string,
 	message: React.ReactNode,
 	dialogProps?: Omit<React.ComponentProps<"dialog">, "open">,
@@ -97,6 +109,5 @@ type ConfirmationOverlayProps = React.ComponentProps<"div"> & {
 	onYes: NoArgsCallback,
 	noButtonVariant?: string,
 	noButtonText?: string,
-	onNo: NoArgsCallback,
-	children: React.ReactNode
+	onNo: NoArgsCallback
 };

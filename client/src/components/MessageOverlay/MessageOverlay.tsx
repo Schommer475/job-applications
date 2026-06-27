@@ -6,16 +6,27 @@ import "./MessageOverlay.css";
 
 export default function MessageOverlay ({
 	showing,
+	children,
+	...layerProps
+}: MessageOverlayProps) {
+	return (
+		<Overlay.Frame overlayLayer={showing && <MessageOverlayLayer {...layerProps} />}>
+			{children}
+		</Overlay.Frame>
+	);
+}
+
+MessageOverlay.Layer = MessageOverlayLayer;
+
+export function MessageOverlayLayer ({
 	title,
 	message,
 	acknowledgeButtonVariant = "primary",
 	acknowledgeButtonText = "OK",
 	onAcknowledge,
-	children,
 	className,
-	dialogProps = {},
-	...otherProps
-}: MessageOverlayProps) {
+	dialogProps = {}
+}: MessageOverlayLayerProps) {
 	const headerId = useId(),
 		acknowledgeButtonRef = useRef<HTMLButtonElement | null>(null),
 		classNames = ["message-overlay"];
@@ -31,10 +42,8 @@ export default function MessageOverlay ({
 	}
 
 	return (
-		<Overlay
+		<Overlay.Layer
 			className={classNames.join(" ")}
-			showing={showing}
-			{...otherProps}
 			showFocusTargetRef={acknowledgeButtonRef}
 			onEscape={onAcknowledge}
 			overlayContent={(
@@ -57,9 +66,7 @@ export default function MessageOverlay ({
 					</Button>
 				</dialog>
 			)}
-		>
-			{children}
-		</Overlay>
+		/>
 	);
 }
 
@@ -75,13 +82,17 @@ function normalizeMessage (message: React.ReactNode) {
 	return normalized;
 }
 
-type MessageOverlayProps = React.ComponentProps<"div"> & {
+type MessageOverlayProps = {
 	showing: boolean,
+	children: React.ReactNode
+} & MessageOverlayLayerProps;
+
+type MessageOverlayLayerProps = {
+	className?: string | undefined,
 	title?: string,
 	message: React.ReactNode,
 	dialogProps?: Omit<React.ComponentProps<"dialog">, "open">,
 	acknowledgeButtonVariant?: string,
 	acknowledgeButtonText?: string,
-	onAcknowledge: NoArgsCallback,
-	children: React.ReactNode
+	onAcknowledge: NoArgsCallback
 };

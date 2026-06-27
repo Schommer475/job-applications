@@ -4,12 +4,23 @@ import "./PendingOverlay.css";
 
 export default function PendingOverlay ({
 	showing,
-	message = "Loading, please wait",
-	children
+	children,
+	...layerProps
 }: PendingOverlayProps) {
 	return (
-		<Overlay
-			showing={showing}
+		<Overlay.Frame overlayLayer={showing && <PendingOverlayLayer {...layerProps} />}>
+			{children}
+		</Overlay.Frame>
+	);
+}
+
+PendingOverlay.Layer = PendingOverlayLayer;
+
+export function PendingOverlayLayer ({
+	message = "Loading, please wait"
+}: PendingOverlayLayerProps) {
+	return (
+		<Overlay.Layer
 			className="pending-overlay"
 			overlayContent={(
 				<>
@@ -19,14 +30,15 @@ export default function PendingOverlay ({
 					</p>
 				</>
 			)}
-		>
-			{children}
-		</Overlay>
+		/>
 	);
 }
 
 type PendingOverlayProps = {
 	showing: boolean,
-	message?: string,
 	children: React.ReactNode
+} & PendingOverlayLayerProps;
+
+type PendingOverlayLayerProps = {
+	message?: string
 };
