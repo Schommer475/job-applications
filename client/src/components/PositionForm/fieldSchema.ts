@@ -92,7 +92,7 @@ export const fieldSchema: Record<FieldSpecifier["path"], FieldRule> = {
 		validationRules: ["url"],
 		label: "Meeting Link"
 	}
-};
+} satisfies Record<FieldSpecifier["path"], FieldRule>;
 
 export type FieldRule = {
 	required?: true,
